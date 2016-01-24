@@ -1,1 +1,1 @@
-include ':app', ':my-http-url-connection-lib'
+include ':app', ':MyNetworkLib'

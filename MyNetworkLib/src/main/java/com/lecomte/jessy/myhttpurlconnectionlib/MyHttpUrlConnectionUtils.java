@@ -17,16 +17,15 @@ public class MyHttpUrlConnectionUtils {
     // Given a URL, establishes an HttpUrlConnection and retrieves the web page content as a
     // InputStream, which it returns as a string
     public static String downloadWebPage(String urlString) {
-        String webPageStr = "";
+
+        // Will contain the raw JSON response as a string
+        String webPageStr = null;
 
         // These two need to be declared outside the try/catch
         // so that they can be closed in the finally block.
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
-
-        // Will contain the raw JSON response as a string.
-        String forecastJsonStr = null;
-
+        
         try {
             // Construct the URL for the OpenWeatherMap query
             // Possible parameters are avaiable at OWM's forecast API page, at
@@ -43,7 +42,7 @@ public class MyHttpUrlConnectionUtils {
             StringBuffer buffer = new StringBuffer();
             if (inputStream == null) {
                 // Nothing to do.
-                forecastJsonStr = null;
+                webPageStr = null;
             }
             reader = new BufferedReader(new InputStreamReader(inputStream));
 
@@ -57,14 +56,14 @@ public class MyHttpUrlConnectionUtils {
 
             if (buffer.length() == 0) {
                 // Stream was empty.  No point in parsing.
-                forecastJsonStr = null;
+                webPageStr = null;
             }
-            forecastJsonStr = buffer.toString();
+            webPageStr = buffer.toString();
         } catch (IOException e) {
             Log.e("PlaceholderFragment", "Error ", e);
             // If the code didn't successfully get the weather data, there's no point in attemping
             // to parse it.
-            forecastJsonStr = null;
+            webPageStr = null;
         } finally{
             if (urlConnection != null) {
                 urlConnection.disconnect();

@@ -9,13 +9,11 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.lecomte.jessy.myhttpurlconnectionlib.MyHttpUrlConnectionUtils;
 import com.lecomte.jessy.popularmovies.dummy.DummyContent;
 
 import java.util.List;
@@ -69,8 +67,7 @@ public class MovieListActivity extends AppCompatActivity {
         }
 
         // TEST
-        String jsonStr = MyHttpUrlConnectionUtils.downloadWebPage("http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=1ed96e22fff439407e05fbfbb876aa3b");
-        Log.d(TAG, jsonStr);
+        new FetchMoviesTask().execute("http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=1ed96e22fff439407e05fbfbb876aa3b");
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
