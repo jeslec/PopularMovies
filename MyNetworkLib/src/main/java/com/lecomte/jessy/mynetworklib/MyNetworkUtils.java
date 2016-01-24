@@ -1,4 +1,4 @@
-package com.lecomte.jessy.myhttpurlconnectionlib;
+package com.lecomte.jessy.mynetworklib;
 
 import android.util.Log;
 
@@ -12,11 +12,11 @@ import java.net.URL;
 /**
  * Created by Jessy on 2016-01-23.
  */
-public class MyHttpUrlConnectionUtils {
+public class MyNetworkUtils {
 
     // Given a URL, establishes an HttpUrlConnection and retrieves the web page content as a
     // InputStream, which it returns as a string
-    public static String downloadWebPage(String urlString) {
+    public static String downloadData(String urlString) {
 
         // Will contain the raw JSON response as a string
         String webPageStr = null;

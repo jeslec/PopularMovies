@@ -2,6 +2,7 @@ package com.lecomte.jessy.popularmovies;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -9,12 +10,16 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.lecomte.jessy.mynetworklib.MyNetworkUtils;
 import com.lecomte.jessy.popularmovies.dummy.DummyContent;
+
+import org.json.JSONException;
 
 import java.util.List;
 
@@ -67,7 +72,38 @@ public class MovieListActivity extends AppCompatActivity {
         }
 
         // TEST
-        new FetchMoviesTask().execute("http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=1ed96e22fff439407e05fbfbb876aa3b");
+        new downloadDataTask().execute("http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=1ed96e22fff439407e05fbfbb876aa3b");
+    }
+
+    // Uses AsyncTask to create a task away from the main UI thread. This task takes a
+    // URL string and uses it to create an HttpUrlConnection. Once the connection
+    // has been established, the AsyncTask downloads the contents of the webpage as
+    // an InputStream. Finally, the InputStream is converted into a string, which is
+    // displayed in the UI by the AsyncTask's onPostExecute method.
+    private class downloadDataTask extends AsyncTask<String, Void, String> {
+        private final String TAG = downloadDataTask.class.getSimpleName();
+
+        @Override
+        protected String doInBackground(String... urls) {
+            // params comes from the execute() call: params[0] is the url.
+            String jsonString = MyNetworkUtils.downloadData(urls[0]);
+
+            try {
+                // Parse the JSON string into our model layer
+            /*Movies movies =*/ JsonParser.parse(jsonString);
+            } catch (JSONException e) {
+                Log.e(TAG, e.getMessage());
+            }
+
+            return jsonString;
+        }
+
+        // Displays the results of the AsyncTask
+        @Override
+        protected void onPostExecute(String data) {
+            //textView.setText(result);
+            Log.d(TAG, data);
+        }
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {

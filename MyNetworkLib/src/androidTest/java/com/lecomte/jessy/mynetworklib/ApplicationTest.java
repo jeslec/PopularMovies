@@ -1,4 +1,4 @@
-package com.lecomte.jessy.myhttpurlconnectionlib;
+package com.lecomte.jessy.mynetworklib;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
