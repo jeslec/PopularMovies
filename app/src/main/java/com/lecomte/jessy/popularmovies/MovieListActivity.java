@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.lecomte.jessy.mynetworklib.MyNetworkUtils;
+import com.lecomte.jessy.popularmovies.data.Movies;
 import com.lecomte.jessy.popularmovies.dummy.DummyContent;
 
 import org.json.JSONException;
@@ -80,30 +81,39 @@ public class MovieListActivity extends AppCompatActivity {
     // has been established, the AsyncTask downloads the contents of the webpage as
     // an InputStream. Finally, the InputStream is converted into a string, which is
     // displayed in the UI by the AsyncTask's onPostExecute method.
-    private class downloadDataTask extends AsyncTask<String, Void, String> {
+    private class downloadDataTask extends AsyncTask<String, Void, Movies> {
         private final String TAG = downloadDataTask.class.getSimpleName();
 
         @Override
-        protected String doInBackground(String... urls) {
+        protected Movies doInBackground(String... urls) {
             // params comes from the execute() call: params[0] is the url.
             String jsonString = MyNetworkUtils.downloadData(urls[0]);
 
             try {
                 // Parse the JSON string into our model layer
-            /*Movies movies =*/ JsonParser.parse(jsonString);
+                return JsonParser.parse(jsonString);
             } catch (JSONException e) {
                 Log.e(TAG, e.getMessage());
             }
 
-            return jsonString;
+            return null;
         }
 
         // Displays the results of the AsyncTask
         @Override
-        protected void onPostExecute(String data) {
-            //textView.setText(result);
-            Log.d(TAG, data);
+        protected void onPostExecute(Movies moviesData) {
+            updateUI(moviesData);
         }
+    }
+
+    private void updateUI(Movies moviesData) {
+        if (moviesData == null) {
+            Log.d(TAG, "Movies data is null!");
+            return;
+        }
+
+        //textView.setText(result);
+        Log.d(TAG, moviesData.toString());
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {

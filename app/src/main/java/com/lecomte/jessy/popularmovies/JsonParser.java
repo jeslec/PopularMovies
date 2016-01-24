@@ -19,6 +19,9 @@ public class JsonParser {
 
         // These are the names of the JSON objects that need to be extracted
         // TMDB: The Movie DataBase
+        final String TMDB_TOTAL_RESULTS     = "total_results";
+        final String TMDB_TOTAL_PAGES       = "total_pages";
+        final String TMDB_PAGE              = "page";
         final String TMDB_RESULTS           = "results";
         final String TMDB_POSTER_PATH       = "poster_path";
         final String TMDB_ADULT             = "adult";
@@ -35,9 +38,13 @@ public class JsonParser {
         final String TMDB_VIDEO             = "video";
         final String TMDB_VOTE_AVERAGE      = "vote_average";
 
-        JSONObject moviesJson = new JSONObject(jsonString);
-        JSONArray moviesArray = moviesJson.getJSONArray(TMDB_RESULTS);
+        JSONObject moviesJsonObj = new JSONObject(jsonString);
 
+        movies.setPage(moviesJsonObj.getString(TMDB_PAGE));
+        movies.setTotal_results(moviesJsonObj.getString(TMDB_TOTAL_RESULTS));
+        movies.setTotal_pages(moviesJsonObj.getString(TMDB_TOTAL_PAGES));
+
+        JSONArray moviesArray = moviesJsonObj.getJSONArray(TMDB_RESULTS);
         Results[] resultArray = new Results[moviesArray.length()];
 
         for(int i = 0; i < moviesArray.length(); i++) {
