@@ -11,80 +11,64 @@ import org.json.JSONObject;
  * Created by Jessy on 2016-01-24.
  */
 public class JsonParser {
-
     private static final String TAG = JsonParser.class.getSimpleName();
 
     public static Movies parse(String jsonString)  throws JSONException {
 
         Movies movies = new Movies();
 
-        // TMDB: The Movie DataBase
-
-        // Max number of results per page
-        final int TMDB_RESULTS_PER_PAGE = 20;
-
         // These are the names of the JSON objects that need to be extracted
-        final String TMDB_RESULTS       = "results";
-        final String TMDB_POSTER_PATH   = "poster_path";
-        final String TMDB_TITLE         = "title";
+        // TMDB: The Movie DataBase
+        final String TMDB_RESULTS           = "results";
+        final String TMDB_POSTER_PATH       = "poster_path";
+        final String TMDB_ADULT             = "adult";
+        final String TMDB_OVERVIEW          = "overview";
+        final String TMDB_RELEASE_DATE      = "release_date";
+        final String TMDB_GENRE_IDS         = "genre_ids";
+        final String TMDB_ID                = "id";
+        final String TMDB_ORIGINAL_TITLE    = "original_title";
+        final String TMDB_ORIGINAL_LANGUAGE = "original_language";
+        final String TMDB_TITLE             = "title";
+        final String TMDB_BACKDROP_PATH     = "backdrop_path";
+        final String TMDB_POPULARITY        = "popularity";
+        final String TMDB_VOTE_COUNT        = "vote_count";
+        final String TMDB_VIDEO             = "video";
+        final String TMDB_VOTE_AVERAGE      = "vote_average";
 
         JSONObject moviesJson = new JSONObject(jsonString);
         JSONArray moviesArray = moviesJson.getJSONArray(TMDB_RESULTS);
 
-        // OWM returns daily forecasts based upon the local time of the city that is being
-        // asked for, which means that we need to know the GMT offset to translate this data
-        // properly.
-
-        // Since this data is also sent in-order and the first day is always the
-        // current day, we're going to take advantage of that to get a nice
-        // normalized UTC date for all of our weather.
-
-        /*Time dayTime = new Time();
-        dayTime.setToNow();
-
-        // we start at the day returned by local time. Otherwise this is a mess.
-        int julianStartDay = Time.getJulianDay(System.currentTimeMillis(), dayTime.gmtoff);
-
-        // now we work exclusively in UTC
-        dayTime = new Time();*/
-
         Results[] resultArray = new Results[moviesArray.length()];
 
         for(int i = 0; i < moviesArray.length(); i++) {
-
             resultArray[i] = new Results();
-
-            // For now, using the format "Day, description, hi/low"
-            String day;
-            String description;
-            String highAndLow;
 
             // Get the JSON object representing a movie
             JSONObject movie = moviesArray.getJSONObject(i);
 
-            resultArray[i].setTitle(movie.getString(TMDB_TITLE));
+            // Extract data from the JSON object
             resultArray[i].setPoster_path(movie.getString(TMDB_POSTER_PATH));
+            resultArray[i].setAdult(movie.getString(TMDB_ADULT));
+            resultArray[i].setOverview(movie.getString(TMDB_OVERVIEW));
+            resultArray[i].setRelease_date(movie.getString(TMDB_RELEASE_DATE));
+            resultArray[i].setId(movie.getString(TMDB_ID));
+            resultArray[i].setOriginal_title(movie.getString(TMDB_ORIGINAL_TITLE));
+            resultArray[i].setOriginal_language(movie.getString(TMDB_ORIGINAL_LANGUAGE));
+            resultArray[i].setTitle(movie.getString(TMDB_TITLE));
+            resultArray[i].setBackdrop_path(movie.getString(TMDB_BACKDROP_PATH));
+            resultArray[i].setPopularity(movie.getString(TMDB_POPULARITY));
+            resultArray[i].setVote_count(movie.getString(TMDB_VOTE_COUNT));
+            resultArray[i].setVideo(movie.getString(TMDB_VIDEO));
+            resultArray[i].setVote_average(movie.getString(TMDB_VOTE_AVERAGE));
 
-            // The date/time is returned as a long.  We need to convert that
-            // into something human-readable, since most people won't read "1400356800" as
-            // "this saturday".
-            /*long dateTime;
-            // Cheating to convert this to UTC time, which is what we want anyhow
-            dateTime = dayTime.setJulianDay(julianStartDay+i);
-            day = getReadableDateString(dateTime);
+            JSONArray genreIdsArray = movie.getJSONArray(TMDB_GENRE_IDS);
+            String[] genre_ids = new String[genreIdsArray.length()];
 
-            // description is in a child array called "weather", which is 1 element long.
-            JSONObject weatherObject = dayForecast.getJSONArray(OWM_WEATHER).getJSONObject(0);
-            description = weatherObject.getString(OWM_DESCRIPTION);
+            for (int idIndex=0; idIndex < genreIdsArray.length(); idIndex++) {
+                genre_ids[idIndex] = genreIdsArray.getString(idIndex);
+            }
 
-            // Temperatures are in a child object called "temp".  Try not to name variables
-            // "temp" when working with temperature.  It confuses everybody.
-            JSONObject temperatureObject = dayForecast.getJSONObject(OWM_TEMPERATURE);
-            double high = temperatureObject.getDouble(OWM_MAX);
-            double low = temperatureObject.getDouble(OWM_MIN);
-
-            highAndLow = formatHighLows(high, low);
-            resultStrs[i] = day + " - " + description + " - " + highAndLow;*/
+            resultArray[i].setGenre_ids(genre_ids);
         }
 
         movies.setResults(resultArray);
