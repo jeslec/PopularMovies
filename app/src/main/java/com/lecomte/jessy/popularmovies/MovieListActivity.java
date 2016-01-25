@@ -35,7 +35,7 @@ import org.json.JSONException;
 public class MovieListActivity extends AppCompatActivity {
 
     private static final String TAG = MovieListActivity.class.getSimpleName();
-    private static final String BASE_POSTER_URL = "http://image.tmdb.org/t/p/w185";
+    private static final String BASE_POSTER_URL = "http://image.tmdb.org/t/p/w342";//w185";
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -120,10 +120,8 @@ public class MovieListActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView() {
-
-        //
-        int columnCount = 2; //getResources().getInteger(R.integer.cardview_list_columns);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(this, columnCount));
+        mRecyclerView.setLayoutManager(new GridLayoutManager(this,
+                getResources().getInteger(R.integer.recyclerview_columns)));
 
         //recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(DummyContent.ITEMS));
     }
@@ -204,4 +202,24 @@ public class MovieListActivity extends AppCompatActivity {
             }
         }
     }
+
+   /* public static int containerHeight(Activity activity) {
+        DisplayMetrics dm = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
+
+        *//*LogUtil.dLog(Static.HEIGHT_TAG, "Screen Height of " + Build.MANUFACTURER + " " + Build.DEVICE + " "
+                + Build.MODEL + " is " + Integer.toString(dm.heightPixels));*//*
+
+        double ratio = Static.PIC_RATIO_VALUE;
+
+        try {
+            if (activity.getDB() != null && activity.getDB().isOpen() && activity.getDB().exists(Static.PIC_RATIO))
+                ratio = activity.getDB().getDouble(Static.PIC_RATIO);
+        } catch (SnappydbException e) {
+            e.printStackTrace();
+            LogUtil.dLog(Static.DB_TAG, "SnappydbException | couldn't get Static.PIC_RATIO");
+        }
+
+        return (int) (dm.heightPixels / ratio);
+    }*/
 }
