@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -15,15 +14,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.lecomte.jessy.mynetworklib.NetworkUtils;
 import com.lecomte.jessy.mythemoviedblib.JsonMovieDataParser;
 import com.lecomte.jessy.mythemoviedblib.data.Movies;
-import com.lecomte.jessy.popularmovies.dummy.DummyContent;
+import com.lecomte.jessy.mythemoviedblib.data.Results;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
-
-import java.util.List;
 
 /**
  * An activity representing a list of Movies. This activity
@@ -36,12 +35,14 @@ import java.util.List;
 public class MovieListActivity extends AppCompatActivity {
 
     private static final String TAG = MovieListActivity.class.getSimpleName();
+    private static final String BASE_POSTER_URL = "http://image.tmdb.org/t/p/w185";
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
      * device.
      */
     private boolean mTwoPane;
+    private RecyclerView mRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,9 +62,9 @@ public class MovieListActivity extends AppCompatActivity {
             }
         });
 
-        View recyclerView = findViewById(R.id.movie_list);
-        assert recyclerView != null;
-        setupRecyclerView((RecyclerView) recyclerView);
+        mRecyclerView = (RecyclerView)findViewById(R.id.movie_list);
+        assert mRecyclerView != null;
+        setupRecyclerView();
 
         if (findViewById(R.id.movie_detail_container) != null) {
             // The detail container view will be present only in the
@@ -107,34 +108,37 @@ public class MovieListActivity extends AppCompatActivity {
         }
     }
 
-    private void updateUI(Movies moviesData) {
-        if (moviesData == null) {
+    private void updateUI(Movies movies) {
+        if (movies == null) {
             Log.d(TAG, "Movies data is null!");
             return;
         }
 
         //textView.setText(result);
-        Log.d(TAG, moviesData.toString());
+        Log.d(TAG, movies.toString());
+        mRecyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(this, movies));
     }
 
-    private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
+    private void setupRecyclerView() {
 
         //
         int columnCount = 2; //getResources().getInteger(R.integer.cardview_list_columns);
         StaggeredGridLayoutManager sglm =
                 new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(sglm);
+        mRecyclerView.setLayoutManager(sglm);
 
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(DummyContent.ITEMS));
+        //recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(DummyContent.ITEMS));
     }
 
     public class SimpleItemRecyclerViewAdapter
             extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
-        private final List<DummyContent.DummyItem> mValues;
+        private final Context mContext;
+        private Movies mMovies = new Movies();
 
-        public SimpleItemRecyclerViewAdapter(List<DummyContent.DummyItem> items) {
-            mValues = items;
+        public SimpleItemRecyclerViewAdapter(Context context, Movies movies) {
+            mContext = context;
+            mMovies = movies;
         }
 
         @Override
@@ -146,16 +150,20 @@ public class MovieListActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
-            holder.mItem = mValues.get(position);
+            holder.mItem = mMovies.getResults()[position];
             /*holder.mIdView.setText(mValues.get(position).id);
             holder.mContentView.setText(mValues.get(position).content);*/
+            //holder.posterImageView
+            String posterUrl = BASE_POSTER_URL + holder.mItem.getPoster_path();
+            Log.d(TAG, String.format("[%d]: %s", position, posterUrl));
+            Picasso.with(mContext).load(posterUrl).into(holder.posterImageView);
 
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (mTwoPane) {
                         Bundle arguments = new Bundle();
-                        arguments.putString(MovieDetailFragment.ARG_ITEM_ID, holder.mItem.id);
+                        arguments.putString(MovieDetailFragment.ARG_ITEM_ID, holder.mItem.getId());
                         MovieDetailFragment fragment = new MovieDetailFragment();
                         fragment.setArguments(arguments);
                         getSupportFragmentManager().beginTransaction()
@@ -164,7 +172,7 @@ public class MovieListActivity extends AppCompatActivity {
                     } else {
                         Context context = v.getContext();
                         Intent intent = new Intent(context, MovieDetailActivity.class);
-                        intent.putExtra(MovieDetailFragment.ARG_ITEM_ID, holder.mItem.id);
+                        intent.putExtra(MovieDetailFragment.ARG_ITEM_ID, holder.mItem.getId());
 
                         context.startActivity(intent);
                     }
@@ -174,18 +182,20 @@ public class MovieListActivity extends AppCompatActivity {
 
         @Override
         public int getItemCount() {
-            return mValues.size();
+            return mMovies.getResults().length;
         }
 
         public class ViewHolder extends RecyclerView.ViewHolder {
             public final View mView;
             /*public final TextView mIdView;
             public final TextView mContentView;*/
-            public DummyContent.DummyItem mItem;
+            public ImageView posterImageView;
+            public Results mItem;
 
             public ViewHolder(View view) {
                 super(view);
                 mView = view;
+                posterImageView = (ImageView)view.findViewById(R.id.movie_list_poster_ImageView);
                 /*mIdView = (TextView) view.findViewById(R.id.id);
                 mContentView = (TextView) view.findViewById(R.id.content);*/
             }
