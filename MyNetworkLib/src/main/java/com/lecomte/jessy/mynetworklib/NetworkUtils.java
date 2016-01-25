@@ -1,7 +1,5 @@
 package com.lecomte.jessy.mynetworklib;
 
-import android.util.Log;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -60,7 +58,7 @@ public class NetworkUtils {
             }
             webPageStr = buffer.toString();
         } catch (IOException e) {
-            Log.e("PlaceholderFragment", "Error ", e);
+            //Log.e("PlaceholderFragment", "Error ", e);
             // If the code didn't successfully get the weather data, there's no point in attemping
             // to parse it.
             webPageStr = null;
@@ -72,7 +70,7 @@ public class NetworkUtils {
                 try {
                     reader.close();
                 } catch (final IOException e) {
-                    Log.e("PlaceholderFragment", "Error closing stream", e);
+                    //Log.e("PlaceholderFragment", "Error closing stream", e);
                 }
             }
         }
