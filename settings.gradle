@@ -1,1 +1,1 @@
-include ':app', ':MyNetworkLib'
+include ':app', ':mynetworklib', ':mythemoviedblib'

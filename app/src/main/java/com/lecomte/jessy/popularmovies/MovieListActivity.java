@@ -16,8 +16,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.lecomte.jessy.mynetworklib.MyNetworkUtils;
-import com.lecomte.jessy.popularmovies.data.Movies;
+import com.lecomte.jessy.mynetworklib.NetworkUtils;
+import com.lecomte.jessy.mythemoviedblib.JsonMovieDataParser;
+import com.lecomte.jessy.mythemoviedblib.data.Movies;
 import com.lecomte.jessy.popularmovies.dummy.DummyContent;
 
 import org.json.JSONException;
@@ -87,11 +88,11 @@ public class MovieListActivity extends AppCompatActivity {
         @Override
         protected Movies doInBackground(String... urls) {
             // params comes from the execute() call: params[0] is the url.
-            String jsonString = MyNetworkUtils.downloadData(urls[0]);
+            String jsonString = NetworkUtils.downloadData(urls[0]);
 
             try {
                 // Parse the JSON string into our model layer
-                return JsonParser.parse(jsonString);
+                return JsonMovieDataParser.parse(jsonString);
             } catch (JSONException e) {
                 Log.e(TAG, e.getMessage());
             }
@@ -111,7 +112,7 @@ public class MovieListActivity extends AppCompatActivity {
             Log.d(TAG, "Movies data is null!");
             return;
         }
-
+        
         //textView.setText(result);
         Log.d(TAG, moviesData.toString());
     }

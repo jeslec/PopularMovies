@@ -1,4 +1,4 @@
-package com.lecomte.jessy.popularmovies.data;
+package com.lecomte.jessy.mythemoviedblib.data;
 
 /**
  * Created by Jessy on 2016-01-24.

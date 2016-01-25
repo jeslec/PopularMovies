@@ -1,7 +1,7 @@
-package com.lecomte.jessy.popularmovies;
+package com.lecomte.jessy.mythemoviedblib;
 
-import com.lecomte.jessy.popularmovies.data.Movies;
-import com.lecomte.jessy.popularmovies.data.Results;
+import com.lecomte.jessy.mythemoviedblib.data.Movies;
+import com.lecomte.jessy.mythemoviedblib.data.Results;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -10,8 +10,8 @@ import org.json.JSONObject;
 /**
  * Created by Jessy on 2016-01-24.
  */
-public class JsonParser {
-    private static final String TAG = JsonParser.class.getSimpleName();
+public class JsonMovieDataParser {
+    private static final String TAG = JsonMovieDataParser.class.getSimpleName();
 
     public static Movies parse(String jsonString)  throws JSONException {
 

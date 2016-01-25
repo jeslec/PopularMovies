@@ -12,7 +12,7 @@ import java.net.URL;
 /**
  * Created by Jessy on 2016-01-23.
  */
-public class MyNetworkUtils {
+public class NetworkUtils {
 
     // Given a URL, establishes an HttpUrlConnection and retrieves the web page content as a
     // InputStream, which it returns as a string

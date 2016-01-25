@@ -10,8 +10,9 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/MyNetworkLib" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/mynetworklib" />
+            <option value="$PROJECT_DIR$/mythemoviedblib" />
           </set>
         </option>
       </GradleProjectSettings>
