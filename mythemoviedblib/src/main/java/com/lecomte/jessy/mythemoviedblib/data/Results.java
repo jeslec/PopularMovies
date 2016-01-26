@@ -6,31 +6,18 @@ package com.lecomte.jessy.mythemoviedblib.data;
 public class Results
 {
     private String vote_average;
-
     private String backdrop_path;
-
     private String adult;
-
     private String id;
-
     private String title;
-
     private String overview;
-
     private String original_language;
-
     private String[] genre_ids;
-
     private String release_date;
-
     private String original_title;
-
     private String vote_count;
-
     private String poster_path;
-
     private String video;
-
     private String popularity;
 
     public String getVote_average ()

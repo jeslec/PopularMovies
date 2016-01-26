@@ -24,6 +24,9 @@ import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  * An activity representing a list of Movies. This activity
  * has different presentations for handset and tablet-size devices. On
@@ -114,9 +117,8 @@ public class MovieListActivity extends AppCompatActivity {
             return;
         }
 
-        //textView.setText(result);
         Log.d(TAG, movies.toString());
-        mRecyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(this, movies));
+        mRecyclerView.setAdapter(new RecyclerViewAdapter(movies.getResults()));
     }
 
     private void setupRecyclerView() {
@@ -126,16 +128,20 @@ public class MovieListActivity extends AppCompatActivity {
         //recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(DummyContent.ITEMS));
     }
 
-    public class SimpleItemRecyclerViewAdapter
-            extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
+    public class RecyclerViewAdapter
+            extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
 
-        private final Context mContext;
-        private Movies mMovies = new Movies();
+        private ArrayList<Results> mData;
 
-        public SimpleItemRecyclerViewAdapter(Context context, Movies movies) {
-            mContext = context;
-            mMovies = movies;
+        public RecyclerViewAdapter(Results[] resultsArray) {
+            mData = new ArrayList<Results>(Arrays.asList(resultsArray));
         }
+
+        /*public void swap(ArrayList<Data> datas){
+            data.clear();
+            data.addAll(datas);
+            notifyDataSetChanged();
+        }*/
 
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -146,13 +152,13 @@ public class MovieListActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
-            holder.mItem = mMovies.getResults()[position];
-            /*holder.mIdView.setText(mValues.get(position).id);
-            holder.mContentView.setText(mValues.get(position).content);*/
-            //holder.posterImageView
+            holder.mItem = mData.get(position);
             String posterUrl = BASE_POSTER_URL + holder.mItem.getPoster_path();
             Log.d(TAG, String.format("[%d]: %s", position, posterUrl));
-            Picasso.with(mContext).load(posterUrl).into(holder.posterImageView);
+
+            // Neat trick: we are getting the context from the view itself
+            Picasso.with(holder.posterImageView.getContext())
+                    .load(posterUrl).into(holder.posterImageView);
 
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -178,13 +184,12 @@ public class MovieListActivity extends AppCompatActivity {
 
         @Override
         public int getItemCount() {
-            return mMovies.getResults().length;
+            //return mMovies.getResults().length;
+            return mData.size();
         }
 
         public class ViewHolder extends RecyclerView.ViewHolder {
             public final View mView;
-            /*public final TextView mIdView;
-            public final TextView mContentView;*/
             public ImageView posterImageView;
             public Results mItem;
 
@@ -192,8 +197,6 @@ public class MovieListActivity extends AppCompatActivity {
                 super(view);
                 mView = view;
                 posterImageView = (ImageView)view.findViewById(R.id.movie_list_poster_ImageView);
-                /*mIdView = (TextView) view.findViewById(R.id.id);
-                mContentView = (TextView) view.findViewById(R.id.content);*/
             }
 
             @Override

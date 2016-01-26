@@ -6,11 +6,8 @@ package com.lecomte.jessy.mythemoviedblib.data;
 public class Movies
 {
     private Results[] results;
-
     private String page;
-
     private String total_pages;
-
     private String total_results;
 
     public Results[] getResults ()
