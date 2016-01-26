@@ -1,9 +1,50 @@
-<TextView android:id="@+id/movie_detail"
-          style="?android:attr/textAppearanceLarge"
-          xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"
-          android:padding="16dp"
-          android:textIsSelectable="true"
-          tools:context="com.lecomte.jessy.popularmovies.MovieDetailFragment"/>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/detail_poster_ImageView"
+            android:layout_width="0dp"
+            android:layout_height="300dp"
+            android:layout_weight="50"
+            android:background="#ff0000"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="50"
+            android:background="#00ff00"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/detail_releaseDate_TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="?android:attr/textAppearanceLarge"/>
+
+            <TextView
+                android:id="@+id/detail_voteAverage_TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="?android:attr/textAppearanceLarge"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <TextView android:id="@+id/movie_detail"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:padding="16dp"
+              android:textIsSelectable="true"
+              style="?android:attr/textAppearanceMedium"/>
+
+</LinearLayout>

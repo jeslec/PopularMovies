@@ -7,9 +7,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.lecomte.jessy.mythemoviedblib.data.Results;
+import com.squareup.picasso.Picasso;
 
 /**
  * A fragment representing a single Movie detail screen.
@@ -23,6 +25,7 @@ public class MovieDetailFragment extends Fragment {
      * represents.
      */
     public static final String ARG_ITEM = "item";
+    private static final String AVERAGE_RATING_SUFFIX = "/10";
 
     /**
      * The movie data to display
@@ -59,9 +62,22 @@ public class MovieDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.movie_detail, container, false);
 
-        // Show the dummy content as text in a TextView.
+        // Show the movie data
         if (mItem != null) {
             ((TextView) rootView.findViewById(R.id.movie_detail)).setText(mItem.getOverview());
+
+            // Movie poster
+            ImageView poster = (ImageView)rootView.findViewById(R.id.detail_poster_ImageView);
+            String posterUrl = MovieListActivity.BASE_POSTER_URL + mItem.getPoster_path();
+            Picasso.with(getContext()).load(posterUrl).into(poster);
+
+            // Release date
+            ((TextView)rootView.findViewById(R.id.detail_releaseDate_TextView))
+                    .setText(mItem.getRelease_date());
+
+            // Vote average
+            ((TextView)rootView.findViewById(R.id.detail_voteAverage_TextView))
+                    .setText(mItem.getVote_average() + AVERAGE_RATING_SUFFIX);
         }
 
         return rootView;

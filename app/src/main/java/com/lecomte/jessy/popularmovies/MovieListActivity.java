@@ -38,7 +38,10 @@ import java.util.Arrays;
 public class MovieListActivity extends AppCompatActivity {
 
     private static final String TAG = MovieListActivity.class.getSimpleName();
-    private static final String BASE_POSTER_URL = "http://image.tmdb.org/t/p/w342";//w185";
+
+    // TODO: this value is now public (instead of private) because I access it also from the
+    // details fragment. Should this be somewhere else, perhaps? In preferences, maybe???
+    public static final String BASE_POSTER_URL = "http://image.tmdb.org/t/p/w342";//w185";
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
