@@ -64,7 +64,7 @@ public class MovieDetailFragment extends Fragment {
 
         // Show the movie data
         if (mItem != null) {
-            ((TextView) rootView.findViewById(R.id.movie_detail)).setText(mItem.getOverview());
+            ((TextView) rootView.findViewById(R.id.detail_summary_TextView)).setText(mItem.getOverview());
 
             // Movie poster
             ImageView poster = (ImageView)rootView.findViewById(R.id.detail_poster_ImageView);
@@ -78,6 +78,7 @@ public class MovieDetailFragment extends Fragment {
             // Vote average
             ((TextView)rootView.findViewById(R.id.detail_voteAverage_TextView))
                     .setText(mItem.getVote_average() + AVERAGE_RATING_SUFFIX);
+
         }
 
         return rootView;

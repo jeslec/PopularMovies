@@ -40,11 +40,31 @@
 
     </LinearLayout>
 
-    <TextView android:id="@+id/movie_detail"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:padding="16dp"
-              android:textIsSelectable="true"
-              style="?android:attr/textAppearanceMedium"/>
+    <TextView
+        android:id="@+id/detail_summary_TextView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp"
+        android:textIsSelectable="true"
+        style="?android:attr/textAppearanceMedium"/>
+
+    <!-- Draw a separator/divider line -->
+    <!-- http://stackoverflow.com/questions/5049852/android-drawing-separator-divider-line-in-layout#10282253 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="0dp"/>
+
+    <TextView
+        android:id="@+id/detail_trailersLabel_TextView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp"
+        android:textIsSelectable="true"
+        style="?android:attr/textAppearanceMedium"
+        android:text="@string/detail_trailers_label"/>
 
 </LinearLayout>
