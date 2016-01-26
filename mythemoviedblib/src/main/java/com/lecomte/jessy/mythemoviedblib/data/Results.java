@@ -1,10 +1,9 @@
 package com.lecomte.jessy.mythemoviedblib.data;
 
-/**
- * Created by Jessy on 2016-01-24.
- */
-public class Results
-{
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Results implements Parcelable {
     private String vote_average;
     private String backdrop_path;
     private String adult;
@@ -19,6 +18,10 @@ public class Results
     private String poster_path;
     private String video;
     private String popularity;
+
+    public Results() {
+
+    }
 
     public String getVote_average ()
     {
@@ -165,4 +168,66 @@ public class Results
     {
         return "ClassPojo [vote_average = "+vote_average+", backdrop_path = "+backdrop_path+", adult = "+adult+", id = "+id+", title = "+title+", overview = "+overview+", original_language = "+original_language+", genre_ids = "+genre_ids+", release_date = "+release_date+", original_title = "+original_title+", vote_count = "+vote_count+", poster_path = "+poster_path+", video = "+video+", popularity = "+popularity+"]";
     }
+
+    protected Results(Parcel in) {
+        vote_average = in.readString();
+        backdrop_path = in.readString();
+        adult = in.readString();
+        id = in.readString();
+        title = in.readString();
+        overview = in.readString();
+        original_language = in.readString();
+        release_date = in.readString();
+        original_title = in.readString();
+        vote_count = in.readString();
+        poster_path = in.readString();
+        video = in.readString();
+        popularity = in.readString();
+
+        // This is how we reead a String array
+        // First, we get the number of items then the items
+        genre_ids = new String[in.readInt()];
+        in.readStringArray(genre_ids);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(vote_average);
+        dest.writeString(backdrop_path);
+        dest.writeString(adult);
+        dest.writeString(id);
+        dest.writeString(title);
+        dest.writeString(overview);
+        dest.writeString(original_language);
+        dest.writeString(release_date);
+        dest.writeString(original_title);
+        dest.writeString(vote_count);
+        dest.writeString(poster_path);
+        dest.writeString(video);
+        dest.writeString(popularity);
+
+        // This is how an array is parceled
+        // First write array length, then array content
+        // http://stackoverflow.com/questions/12121543/reading-and-writing-integer-array-to-parcel#23687974
+        dest.writeInt(genre_ids.length);
+        dest.writeStringArray(genre_ids);
+    }
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<Results> CREATOR = new Parcelable.Creator<Results>() {
+        @Override
+        public Results createFromParcel(Parcel in) {
+            return new Results(in);
+        }
+
+        @Override
+        public Results[] newArray(int size) {
+            return new Results[size];
+        }
+    };
 }

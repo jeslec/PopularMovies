@@ -131,6 +131,7 @@ public class MovieListActivity extends AppCompatActivity {
     public class RecyclerViewAdapter
             extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
 
+        // Data to be displayed in the RecyclerView
         private ArrayList<Results> mData;
 
         public RecyclerViewAdapter(Results[] resultsArray) {
@@ -165,7 +166,7 @@ public class MovieListActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     if (mTwoPane) {
                         Bundle arguments = new Bundle();
-                        arguments.putString(MovieDetailFragment.ARG_ITEM_ID, holder.mItem.getId());
+                        arguments.putParcelable(MovieDetailFragment.ARG_ITEM, holder.mItem);
                         MovieDetailFragment fragment = new MovieDetailFragment();
                         fragment.setArguments(arguments);
                         getSupportFragmentManager().beginTransaction()
@@ -174,7 +175,7 @@ public class MovieListActivity extends AppCompatActivity {
                     } else {
                         Context context = v.getContext();
                         Intent intent = new Intent(context, MovieDetailActivity.class);
-                        intent.putExtra(MovieDetailFragment.ARG_ITEM_ID, holder.mItem.getId());
+                        intent.putExtra(MovieDetailFragment.ARG_ITEM, holder.mItem);
 
                         context.startActivity(intent);
                     }
