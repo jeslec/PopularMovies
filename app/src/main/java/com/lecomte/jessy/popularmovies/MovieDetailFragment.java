@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.lecomte.jessy.mythemoviedblib.MovieDataUrlBuilder;
 import com.lecomte.jessy.mythemoviedblib.data.Results;
 import com.squareup.picasso.Picasso;
 
@@ -68,7 +69,7 @@ public class MovieDetailFragment extends Fragment {
 
             // Movie poster
             ImageView poster = (ImageView)rootView.findViewById(R.id.detail_poster_ImageView);
-            String posterUrl = MovieListActivity.BASE_POSTER_URL + mItem.getPoster_path();
+            String posterUrl = MovieDataUrlBuilder.buildPosterUrl(mItem.getPoster_path());
             Picasso.with(getContext()).load(posterUrl).into(poster);
 
             // Release date

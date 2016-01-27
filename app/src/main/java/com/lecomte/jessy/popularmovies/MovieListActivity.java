@@ -18,6 +18,7 @@ import android.widget.ImageView;
 
 import com.lecomte.jessy.mynetworklib.NetworkUtils;
 import com.lecomte.jessy.mythemoviedblib.JsonMovieDataParser;
+import com.lecomte.jessy.mythemoviedblib.MovieDataUrlBuilder;
 import com.lecomte.jessy.mythemoviedblib.data.Movies;
 import com.lecomte.jessy.mythemoviedblib.data.Results;
 import com.squareup.picasso.Picasso;
@@ -39,9 +40,8 @@ public class MovieListActivity extends AppCompatActivity {
 
     private static final String TAG = MovieListActivity.class.getSimpleName();
 
-    // TODO: this value is now public (instead of private) because I access it also from the
-    // details fragment. Should this be somewhere else, perhaps? In preferences, maybe???
-    public static final String BASE_POSTER_URL = "http://image.tmdb.org/t/p/w342";//w185";
+    // TODO: Remove API key from GitHub!!!
+    private static final String TMDB_API_KEY = "1ed96e22fff439407e05fbfbb876aa3b";
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -80,8 +80,7 @@ public class MovieListActivity extends AppCompatActivity {
             mTwoPane = true;
         }
 
-        // TEST
-        new downloadDataTask().execute("http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=1ed96e22fff439407e05fbfbb876aa3b");
+        new downloadDataTask().execute(MovieDataUrlBuilder.buildDiscoverUrl(TMDB_API_KEY));
     }
 
     // Uses AsyncTask to create a task away from the main UI thread. This task takes a
@@ -157,8 +156,8 @@ public class MovieListActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mItem = mData.get(position);
-            String posterUrl = BASE_POSTER_URL + holder.mItem.getPoster_path();
-            Log.d(TAG, String.format("[%d]: %s", position, posterUrl));
+            String posterUrl = MovieDataUrlBuilder.buildPosterUrl(holder.mItem.getPoster_path());
+            //Log.d(TAG, String.format("[%d]: %s", position, posterUrl));
 
             // Neat trick: we are getting the context from the view itself
             Picasso.with(holder.posterImageView.getContext())
