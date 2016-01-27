@@ -7,15 +7,19 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.lecomte.jessy.mynetworklib.NetworkUtils;
-import com.lecomte.jessy.mythemoviedblib.TheMovieDbJsonParser;
 import com.lecomte.jessy.mythemoviedblib.MovieDataUrlBuilder;
+import com.lecomte.jessy.mythemoviedblib.TheMovieDbJsonParser;
 import com.lecomte.jessy.mythemoviedblib.data.MovieInfo;
+import com.lecomte.jessy.mythemoviedblib.data.TrailerInfo;
 import com.lecomte.jessy.mythemoviedblib.data.Trailers;
 import com.squareup.picasso.Picasso;
 
@@ -40,6 +44,8 @@ public class MovieDetailFragment extends Fragment {
      * The movie data to display
      */
     private MovieInfo mItem;
+
+    ListView mTrailerListView;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -91,6 +97,32 @@ public class MovieDetailFragment extends Fragment {
             ((TextView)rootView.findViewById(R.id.detail_voteAverage_TextView))
                     .setText(mItem.getVote_average() + AVERAGE_RATING_SUFFIX);
 
+            // Trailers
+            mTrailerListView = (ListView)rootView.findViewById(R.id.detail_trailers_ListView);
+            assert mTrailerListView != null;
+
+            // http://stackoverflow.com/questions/18367522/android-list-view-inside-a-scroll-view#19311197
+            mTrailerListView.setOnTouchListener(new View.OnTouchListener() {
+                // Setting on Touch Listener for handling the touch inside ScrollView
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    // Disallow the touch request for parent scroll on touch of child view
+                    v.getParent().requestDisallowInterceptTouchEvent(true);
+
+                    TextView clickedView = (TextView) v;
+                    String viewText = (String)clickedView.getText();
+
+                    return false;
+                }
+            });
+
+            /*mTrailerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                }
+            });
+            */
         }
 
         return rootView;
@@ -122,8 +154,47 @@ public class MovieDetailFragment extends Fragment {
         // Displays the results of the AsyncTask
         @Override
         protected void onPostExecute(Trailers trailersData) {
-            //updateUI(moviesData);
+            updateUI(trailersData.getResults());
             Log.d(TAG, trailersData.toString());
         }
+    }
+
+    private void updateUI(TrailerInfo[] trailerArray) {
+        if (trailerArray == null) {
+            Log.d(TAG, "Trailers data is null!");
+            return;
+        }
+        mTrailerListView.setAdapter(new TrailerListViewAdapter(trailerArray));
+        setListViewHeightBasedOnChildren(mTrailerListView);
+    }
+
+    /*
+        Method for Setting the Height of the ListView dynamically.
+        Hack to fix the issue of not showing all the items of the ListView
+        when placed inside a ScrollView
+
+        http://stackoverflow.com/questions/18367522/android-list-view-inside-a-scroll-view#19311197
+    */
+    public static void setListViewHeightBasedOnChildren(ListView listView) {
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter == null)
+            return;
+
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(),
+                View.MeasureSpec.UNSPECIFIED);
+        int totalHeight = 0;
+        View view = null;
+        for (int i = 0; i < listAdapter.getCount(); i++) {
+            view = listAdapter.getView(i, view, listView);
+            if (i == 0)
+                view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth,
+                        ViewGroup.LayoutParams.WRAP_CONTENT));
+
+            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+            totalHeight += view.getMeasuredHeight();
+        }
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
+        listView.setLayoutParams(params);
     }
 }

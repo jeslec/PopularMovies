@@ -64,6 +64,10 @@ public class MovieDataUrlBuilder {
             Log.d(TAG, "buildTrailersUrl() - Movie ID is invalid");
             return null;
         }
+        // TODO: remove assignment to temporary variable trailerUrl
+        String trailerUrl = TMDB_URL_TRAILERS_PREFIX + movieID + TMDB_URL_TRAILERS_SUFFIX + apiKey;
+        Log.d(TAG, "Trailer Url: " + trailerUrl);
+
         return TMDB_URL_TRAILERS_PREFIX + movieID + TMDB_URL_TRAILERS_SUFFIX + apiKey;
     }
 
