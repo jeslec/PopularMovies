@@ -1,7 +1,9 @@
 package com.lecomte.jessy.mythemoviedblib;
 
+import com.lecomte.jessy.mythemoviedblib.data.MovieInfo;
 import com.lecomte.jessy.mythemoviedblib.data.Movies;
-import com.lecomte.jessy.mythemoviedblib.data.Results;
+import com.lecomte.jessy.mythemoviedblib.data.TrailerInfo;
+import com.lecomte.jessy.mythemoviedblib.data.Trailers;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -10,10 +12,10 @@ import org.json.JSONObject;
 /**
  * Created by Jessy on 2016-01-24.
  */
-public class JsonMovieDataParser {
-    private static final String TAG = JsonMovieDataParser.class.getSimpleName();
+public class TheMovieDbJsonParser {
+    private static final String TAG = TheMovieDbJsonParser.class.getSimpleName();
 
-    public static Movies parse(String jsonString)  throws JSONException {
+    public static Movies parseMovieData(String jsonString)  throws JSONException {
 
         Movies movies = new Movies();
 
@@ -45,10 +47,10 @@ public class JsonMovieDataParser {
         movies.setTotal_pages(moviesJsonObj.getString(TMDB_TOTAL_PAGES));
 
         JSONArray moviesArray = moviesJsonObj.getJSONArray(TMDB_RESULTS);
-        Results[] resultArray = new Results[moviesArray.length()];
+        MovieInfo[] resultArray = new MovieInfo[moviesArray.length()];
 
         for(int i = 0; i < moviesArray.length(); i++) {
-            resultArray[i] = new Results();
+            resultArray[i] = new MovieInfo();
 
             // Get the JSON object representing a movie
             JSONObject movie = moviesArray.getJSONObject(i);
@@ -81,5 +83,42 @@ public class JsonMovieDataParser {
         movies.setResults(resultArray);
 
         return movies;
+    }
+
+    public static Trailers parseTrailerData(String jsonString)  throws JSONException {
+
+        Trailers trailers = new Trailers();
+
+        // These are the names of the JSON objects that need to be extracted
+        // TMDB: The Movie DataBase
+        final String TMDB_TRAILER_ID        = "id";
+        final String TMDB_TRAILER_KEY       = "key";
+        final String TMDB_TRAILER_NAME      = "name";
+        final String TMDB_TRAILER_RESULTS   = "results";
+
+        JSONObject trailersJsonObj = new JSONObject(jsonString);
+
+        // Movie ID for which we are getting the trailers for
+        trailers.setId(trailersJsonObj.getString(TMDB_TRAILER_ID));
+
+        // Array of trailer info
+        JSONArray trailersArray = trailersJsonObj.getJSONArray(TMDB_TRAILER_RESULTS);
+        TrailerInfo[] resultArray = new TrailerInfo[trailersArray.length()];
+
+        for(int i = 0; i < trailersArray.length(); i++) {
+            resultArray[i] = new TrailerInfo();
+
+            // Get the JSON object representing a movie
+            JSONObject trailer = trailersArray.getJSONObject(i);
+
+            // Extract data from the JSON object
+            resultArray[i].setId(trailer.getString(TMDB_TRAILER_ID));
+            resultArray[i].setKey(trailer.getString(TMDB_TRAILER_KEY));
+            resultArray[i].setName(trailer.getString(TMDB_TRAILER_NAME));
+        }
+
+        trailers.setResults(resultArray);
+
+        return trailers;
     }
 }

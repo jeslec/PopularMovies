@@ -27,7 +27,7 @@ public class MovieDataUrlBuilder {
     // Example of a well formed URL to query the trailers for a movie with ID 76341:
     //http://api.themoviedb.org/3/movie/76341/videos?api_key=1ed96e22fff439407e05fbfbb876aa3b
     private static final String TMDB_URL_TRAILERS_PREFIX = "http://api.themoviedb.org/3/movie/";
-    private static final String TMDB_URL_TRAILERS_SUFFIX = "/movies?api_key=";
+    private static final String TMDB_URL_TRAILERS_SUFFIX = "/videos?api_key=";
 
     // TODO: this value is now public (instead of private) because I access it also from the
     // details fragment. Should this be somewhere else, perhaps? In preferences, maybe???

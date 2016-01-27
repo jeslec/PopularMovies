@@ -17,10 +17,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.lecomte.jessy.mynetworklib.NetworkUtils;
-import com.lecomte.jessy.mythemoviedblib.JsonMovieDataParser;
+import com.lecomte.jessy.mythemoviedblib.TheMovieDbJsonParser;
 import com.lecomte.jessy.mythemoviedblib.MovieDataUrlBuilder;
 import com.lecomte.jessy.mythemoviedblib.data.Movies;
-import com.lecomte.jessy.mythemoviedblib.data.Results;
+import com.lecomte.jessy.mythemoviedblib.data.MovieInfo;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
@@ -41,7 +41,8 @@ public class MovieListActivity extends AppCompatActivity {
     private static final String TAG = MovieListActivity.class.getSimpleName();
 
     // TODO: Remove API key from GitHub!!!
-    private static final String TMDB_API_KEY = "1ed96e22fff439407e05fbfbb876aa3b";
+    // Set as public for now because we also need this value in detailsView
+    public static final String TMDB_API_KEY = "1ed96e22fff439407e05fbfbb876aa3b";
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -80,7 +81,7 @@ public class MovieListActivity extends AppCompatActivity {
             mTwoPane = true;
         }
 
-        new downloadDataTask().execute(MovieDataUrlBuilder.buildDiscoverUrl(TMDB_API_KEY));
+        new downloadMovieDataTask().execute(MovieDataUrlBuilder.buildDiscoverUrl(TMDB_API_KEY));
     }
 
     // Uses AsyncTask to create a task away from the main UI thread. This task takes a
@@ -88,8 +89,8 @@ public class MovieListActivity extends AppCompatActivity {
     // has been established, the AsyncTask downloads the contents of the webpage as
     // an InputStream. Finally, the InputStream is converted into a string, which is
     // displayed in the UI by the AsyncTask's onPostExecute method.
-    private class downloadDataTask extends AsyncTask<String, Void, Movies> {
-        private final String TAG = downloadDataTask.class.getSimpleName();
+    private class downloadMovieDataTask extends AsyncTask<String, Void, Movies> {
+        private final String TAG = downloadMovieDataTask.class.getSimpleName();
 
         @Override
         protected Movies doInBackground(String... urls) {
@@ -98,7 +99,7 @@ public class MovieListActivity extends AppCompatActivity {
 
             try {
                 // Parse the JSON string into our model layer
-                return JsonMovieDataParser.parse(jsonString);
+                return TheMovieDbJsonParser.parseMovieData(jsonString);
             } catch (JSONException e) {
                 Log.e(TAG, e.getMessage());
             }
@@ -134,10 +135,10 @@ public class MovieListActivity extends AppCompatActivity {
             extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
 
         // Data to be displayed in the RecyclerView
-        private ArrayList<Results> mData;
+        private ArrayList<MovieInfo> mData;
 
-        public RecyclerViewAdapter(Results[] resultsArray) {
-            mData = new ArrayList<Results>(Arrays.asList(resultsArray));
+        public RecyclerViewAdapter(MovieInfo[] resultsArray) {
+            mData = new ArrayList<MovieInfo>(Arrays.asList(resultsArray));
         }
 
         /*public void swap(ArrayList<Data> datas){
@@ -187,14 +188,13 @@ public class MovieListActivity extends AppCompatActivity {
 
         @Override
         public int getItemCount() {
-            //return mMovies.getResults().length;
             return mData.size();
         }
 
         public class ViewHolder extends RecyclerView.ViewHolder {
             public final View mView;
             public ImageView posterImageView;
-            public Results mItem;
+            public MovieInfo mItem;
 
             public ViewHolder(View view) {
                 super(view);

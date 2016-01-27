@@ -1,18 +1,25 @@
 package com.lecomte.jessy.popularmovies;
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.lecomte.jessy.mynetworklib.NetworkUtils;
+import com.lecomte.jessy.mythemoviedblib.TheMovieDbJsonParser;
 import com.lecomte.jessy.mythemoviedblib.MovieDataUrlBuilder;
-import com.lecomte.jessy.mythemoviedblib.data.Results;
+import com.lecomte.jessy.mythemoviedblib.data.MovieInfo;
+import com.lecomte.jessy.mythemoviedblib.data.Trailers;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONException;
 
 /**
  * A fragment representing a single Movie detail screen.
@@ -27,11 +34,12 @@ public class MovieDetailFragment extends Fragment {
      */
     public static final String ARG_ITEM = "item";
     private static final String AVERAGE_RATING_SUFFIX = "/10";
+    private static final String TAG = MovieDetailFragment.class.getSimpleName();
 
     /**
      * The movie data to display
      */
-    private Results mItem;
+    private MovieInfo mItem;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -55,6 +63,9 @@ public class MovieDetailFragment extends Fragment {
             if (appBarLayout != null) {
                 appBarLayout.setTitle(mItem.getTitle());
             }
+
+            new downloadTrailerDataTask().execute(MovieDataUrlBuilder.buildTrailersUrl(
+                    MovieListActivity.TMDB_API_KEY, mItem.getId()));
         }
     }
 
@@ -83,5 +94,36 @@ public class MovieDetailFragment extends Fragment {
         }
 
         return rootView;
+    }
+
+    // Uses AsyncTask to create a task away from the main UI thread. This task takes a
+    // URL string and uses it to create an HttpUrlConnection. Once the connection
+    // has been established, the AsyncTask downloads the contents of the webpage as
+    // an InputStream. Finally, the InputStream is converted into a string, which is
+    // displayed in the UI by the AsyncTask's onPostExecute method.
+    private class downloadTrailerDataTask extends AsyncTask<String, Void, Trailers> {
+        private final String TAG = downloadTrailerDataTask.class.getSimpleName();
+
+        @Override
+        protected Trailers doInBackground(String... urls) {
+            // params comes from the execute() call: params[0] is the url.
+            String jsonString = NetworkUtils.downloadData(urls[0]);
+
+            try {
+                // Parse the JSON string into our model layer
+                return TheMovieDbJsonParser.parseTrailerData(jsonString);
+            } catch (JSONException e) {
+                Log.e(TAG, e.getMessage());
+            }
+
+            return null;
+        }
+
+        // Displays the results of the AsyncTask
+        @Override
+        protected void onPostExecute(Trailers trailersData) {
+            //updateUI(moviesData);
+            Log.d(TAG, trailersData.toString());
+        }
     }
 }

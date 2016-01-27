@@ -3,7 +3,7 @@ package com.lecomte.jessy.mythemoviedblib.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Results implements Parcelable {
+public class MovieInfo implements Parcelable {
     private String vote_average;
     private String backdrop_path;
     private String adult;
@@ -19,7 +19,7 @@ public class Results implements Parcelable {
     private String video;
     private String popularity;
 
-    public Results() {
+    public MovieInfo() {
 
     }
 
@@ -169,7 +169,7 @@ public class Results implements Parcelable {
         return "ClassPojo [vote_average = "+vote_average+", backdrop_path = "+backdrop_path+", adult = "+adult+", id = "+id+", title = "+title+", overview = "+overview+", original_language = "+original_language+", genre_ids = "+genre_ids+", release_date = "+release_date+", original_title = "+original_title+", vote_count = "+vote_count+", poster_path = "+poster_path+", video = "+video+", popularity = "+popularity+"]";
     }
 
-    protected Results(Parcel in) {
+    protected MovieInfo(Parcel in) {
         vote_average = in.readString();
         backdrop_path = in.readString();
         adult = in.readString();
@@ -219,15 +219,15 @@ public class Results implements Parcelable {
     }
 
     @SuppressWarnings("unused")
-    public static final Parcelable.Creator<Results> CREATOR = new Parcelable.Creator<Results>() {
+    public static final Parcelable.Creator<MovieInfo> CREATOR = new Parcelable.Creator<MovieInfo>() {
         @Override
-        public Results createFromParcel(Parcel in) {
-            return new Results(in);
+        public MovieInfo createFromParcel(Parcel in) {
+            return new MovieInfo(in);
         }
 
         @Override
-        public Results[] newArray(int size) {
-            return new Results[size];
+        public MovieInfo[] newArray(int size) {
+            return new MovieInfo[size];
         }
     };
 }

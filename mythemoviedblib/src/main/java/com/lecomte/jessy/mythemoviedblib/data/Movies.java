@@ -5,17 +5,17 @@ package com.lecomte.jessy.mythemoviedblib.data;
  */
 public class Movies
 {
-    private Results[] results;
+    private MovieInfo[] results;
     private String page;
     private String total_pages;
     private String total_results;
 
-    public Results[] getResults ()
+    public MovieInfo[] getResults ()
     {
         return results;
     }
 
-    public void setResults (Results[] results)
+    public void setResults (MovieInfo[] results)
     {
         this.results = results;
     }
