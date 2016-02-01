@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import com.lecomte.jessy.mythemoviedblib.MovieDataUrlBuilder;
 import com.lecomte.jessy.mythemoviedblib.data.MovieInfo;
+import com.lecomte.jessy.mythemoviedblib.data.TrailerInfo;
 import com.lecomte.jessy.popularmovies.R;
 import com.squareup.picasso.Picasso;
 
@@ -25,6 +26,7 @@ public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.V
     private static final int VIEW_TYPE_1 = 1;
 
     private static final String AVERAGE_RATING_SUFFIX = "/10";
+    private final TrailerInfo[] mTrailerArray;
 
     // Data to be displayed in the RecyclerView
     private MovieInfo mMovieInfo;
@@ -34,17 +36,24 @@ public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.V
     // Layout Id for a single row (or item) of the RecyclerView
     private int mItemLayoutId;
 
-    public RV_MultiViewTypeAdapter(FragmentActivity activity, boolean twoPane, 
-                                   MovieInfo movieInfo) {
+    public RV_MultiViewTypeAdapter(FragmentActivity activity, boolean twoPane,
+                                   MovieInfo movieInfo, TrailerInfo[] trailerArray) {
         mMovieInfo = movieInfo;
         mFragmentActivity = activity;
         mTwoPane = twoPane;
+        mTrailerArray = trailerArray;
     }
 
     @Override
     public int getItemViewType(int position) {
-        // TODO: fix this
-        return 0; //Math.min(1, position % 2);
+
+        if (position == 0) {
+            return 0;
+        }
+
+        else {
+            return 1;
+        }
     }
 
     @Override
@@ -57,12 +66,14 @@ public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.V
 
             case VIEW_TYPE_0:
                 // Inflate one item of the RecyclerView
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_item_viewtype0, parent, false);
+                view = LayoutInflater.from(parent.getContext()).inflate(
+                        R.layout.recyclerview_item_viewtype0, parent, false);
                 return new RV_ViewHolderViewType0(view);
 
             case VIEW_TYPE_1:
                 // Inflate one item of the RecyclerView
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_item_viewtype1, parent, false);
+                view = LayoutInflater.from(parent.getContext()).inflate(
+                        R.layout.recyclerview_item_viewtype1, parent, false);
                 return new RV_ViewHolderViewType1(view);
         }
 
@@ -103,26 +114,12 @@ public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.V
                     }
                 });*/
 
-                //***** Assign a value to each view contained in the view holder **************
-                //vhViewType0.itemTitleTextView.setText(item.name);
-
                 break;
 
             case VIEW_TYPE_1:
-                /*final RV_ViewHolderViewType1 viewHolderViewType1 = (RV_ViewHolderViewType1)viewHolder;
-
-                viewHolderViewType1.itemImageView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Toast.makeText(viewHolderViewType1.itemImageView.getContext(),
-                                "Image clicked", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-                /*//***** Assign a value to each view contained in the view holder **************
-                viewHolderViewType1.itemImageView.setImageResource(R.drawable.hero);
-                viewHolderViewType1.itemNameTextView.setText(item.name);*/
-
+                final RV_ViewHolderViewType1 vhViewType1 = (RV_ViewHolderViewType1)viewHolder;
+                TrailerInfo trailerInfo = mTrailerArray[0];
+                vhViewType1.trailerTitleTextView.setText(trailerInfo.getName());
                 break;
         }
     }
@@ -130,6 +127,6 @@ public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.V
     @Override
     public int getItemCount() {
         // TODO: fix this
-        return 1; // mDataList.size();
+        return 2; // mDataList.size();
     }
 }
