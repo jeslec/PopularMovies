@@ -73,7 +73,7 @@ public class MovieListRecyclerViewAdapter
                 } else {
                     Context context = v.getContext();
                     Intent intent = new Intent(context, MovieDetailActivity.class);
-                    //intent.putExtra(MovieDetailFragment.ARG_ITEM, holder.mItem);
+                    intent.putExtra(MovieDetailActivity.EXTRA_ITEM, holder.mItem);
 
                     context.startActivity(intent);
                 }

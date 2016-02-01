@@ -83,7 +83,7 @@ public class MovieDetailFragment_old extends Fragment {
         if (mItem != null) {
             ((TextView) rootView.findViewById(R.id.detail_summary_TextView)).setText(mItem.getOverview());
 
-            // Movie poster
+            // Movie posterTextView
             ImageView poster = (ImageView)rootView.findViewById(R.id.detail_poster_ImageView);
             String posterUrl = MovieDataUrlBuilder.buildPosterUrl(mItem.getPoster_path());
             Picasso.with(getContext()).load(posterUrl).into(poster);

@@ -1,14 +1,15 @@
 package com.lecomte.jessy.popularmovies.RecyclerView;
 
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
+import com.lecomte.jessy.mythemoviedblib.MovieDataUrlBuilder;
+import com.lecomte.jessy.mythemoviedblib.data.MovieInfo;
 import com.lecomte.jessy.popularmovies.R;
-
-import java.util.List;
+import com.squareup.picasso.Picasso;
 
 // Only for a single viewType (means 1 layout is used for all items)
 // Only for data that is represented as List<Data>
@@ -20,25 +21,27 @@ public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.V
     private static final int VIEW_TYPE_0 = 0;
     private static final int VIEW_TYPE_1 = 1;
 
-    // The data to display in the RecyclerView
-    // TODO: Change the data type so it represents the data to be displayed by the RecyclerView
-    // e.g. List<String) for display strings, List<Cars> for displaying cars, etc.
-    private List<RecyclerViewData> mDataList;
+    private static final String AVERAGE_RATING_SUFFIX = "/10";
+
+    // Data to be displayed in the RecyclerView
+    private MovieInfo mMovieInfo;
+    private final FragmentActivity mFragmentActivity;
+    private final boolean mTwoPane;
 
     // Layout Id for a single row (or item) of the RecyclerView
     private int mItemLayoutId;
 
-    // TODO: Change the data type so it represents the data to be displayed by the RecyclerView
-    // e.g. List<String) for display strings, List<Cars> for displaying cars, etc.
-    // Set the layout Id to the layout for a single row (item) in the RecyclerView list
-    public RV_MultiViewTypeAdapter(List<RecyclerViewData> dataList) {
-        mDataList = dataList;
+    public RV_MultiViewTypeAdapter(FragmentActivity activity, boolean twoPane, 
+                                   MovieInfo movieInfo) {
+        mMovieInfo = movieInfo;
+        mFragmentActivity = activity;
+        mTwoPane = twoPane;
     }
 
     @Override
     public int getItemViewType(int position) {
-        // Limit view type to 0 or 1
-        return Math.min(1, position % 2);
+        // TODO: fix this
+        return 0; //Math.min(1, position % 2);
     }
 
     @Override
@@ -67,27 +70,41 @@ public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.V
     // This is called for each row of the recyclerView
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, int position) {
-        RecyclerViewData item = mDataList.get(position);
+        //RecyclerViewData item = mDataList.get(position);
 
         switch (getItemViewType(position)) {
             case VIEW_TYPE_0:
                 // Set onClick listener on view holder (vh)
                 final RV_ViewHolderViewType0 vhViewType0 = (RV_ViewHolderViewType0)viewHolder;
-                vhViewType0.itemTitleTextView.setOnClickListener(new View.OnClickListener() {
+                vhViewType0.item = mMovieInfo;
+
+                String posterUrl = MovieDataUrlBuilder.buildPosterUrl(vhViewType0.item.getPoster_path());
+
+                // Neat trick: we are getting the context from the view itself
+                Picasso.with(vhViewType0.posterTextView.getContext())
+                        .load(posterUrl).into(vhViewType0.posterTextView);
+
+                vhViewType0.releaseDateTextView.setText(vhViewType0.item.getRelease_date());
+
+                // Vote average
+                vhViewType0.voteAverageTextView.setText(vhViewType0.item.getVote_average() +
+                        AVERAGE_RATING_SUFFIX);
+
+                /*vhViewType0.itemTitleTextView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Toast.makeText(vhViewType0.itemTitleTextView.getContext(),
                                 vhViewType0.itemTitleTextView.getText(), Toast.LENGTH_SHORT).show();
                     }
-                });
+                });*/
 
                 //***** Assign a value to each view contained in the view holder **************
-                vhViewType0.itemTitleTextView.setText(item.name);
+                //vhViewType0.itemTitleTextView.setText(item.name);
 
                 break;
 
             case VIEW_TYPE_1:
-                final RV_ViewHolderViewType1 viewHolderViewType1 = (RV_ViewHolderViewType1)viewHolder;
+                /*final RV_ViewHolderViewType1 viewHolderViewType1 = (RV_ViewHolderViewType1)viewHolder;
 
                 viewHolderViewType1.itemImageView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -97,9 +114,9 @@ public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.V
                     }
                 });
 
-                //***** Assign a value to each view contained in the view holder **************
+                /*//***** Assign a value to each view contained in the view holder **************
                 viewHolderViewType1.itemImageView.setImageResource(R.drawable.hero);
-                viewHolderViewType1.itemNameTextView.setText(item.name);
+                viewHolderViewType1.itemNameTextView.setText(item.name);*/
 
                 break;
         }
@@ -107,6 +124,7 @@ public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     @Override
     public int getItemCount() {
-        return mDataList.size();
+        // TODO: fix this
+        return 1; // mDataList.size();
     }
 }

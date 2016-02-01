@@ -6,26 +6,29 @@ package com.lecomte.jessy.popularmovies.RecyclerView;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.lecomte.jessy.mythemoviedblib.data.MovieInfo;
 import com.lecomte.jessy.popularmovies.R;
 
-
 public class RV_ViewHolderViewType0 extends RecyclerView.ViewHolder {
-    public final View mView;
-
-    // Views declarations (TextViews, ImageViews, etc.)
-    // These variables should all be declared as "public"
-    // e.g. public TextView titleTextView;
-    public TextView itemTitleTextView;
-    //----
+    public View mView;
+    public TextView releaseDateTextView;
+    public TextView voteAverageTextView;
+    public ImageView posterTextView;
+    public MovieInfo item;
 
     public RV_ViewHolderViewType0(View view) {
         super(view);
         mView = view;
+        posterTextView = (ImageView) view.findViewById(R.id.detail_poster_ImageView);
+        releaseDateTextView = (TextView)view.findViewById(R.id.detail_releaseDate_TextView);
+        voteAverageTextView = (TextView)view.findViewById(R.id.detail_voteAverage_TextView);
+    }
 
-        // Get a reference to each view
-        itemTitleTextView = (TextView)view.findViewById(R.id.recyclerView_item_TextView);
-        //----
+    @Override
+    public String toString() {
+        return super.toString();// + " '";// + mContentView.getText() + "'";
     }
 }

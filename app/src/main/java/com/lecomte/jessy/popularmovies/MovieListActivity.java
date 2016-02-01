@@ -118,7 +118,5 @@ public class MovieListActivity extends AppCompatActivity {
     private void setupRecyclerView() {
         mRecyclerView.setLayoutManager(new GridLayoutManager(this,
                 getResources().getInteger(R.integer.recyclerview_columns)));
-
-        //recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(DummyContent.ITEMS));
     }
 }

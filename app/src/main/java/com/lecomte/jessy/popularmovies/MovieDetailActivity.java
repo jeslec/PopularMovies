@@ -1,17 +1,51 @@
 package com.lecomte.jessy.popularmovies;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 
-public class MovieDetailActivity extends AppCompatActivity {
+import com.lecomte.jessy.mythemoviedblib.data.MovieInfo;
+
+public class MovieDetailActivity extends AppCompatActivity
+        implements MovieDetailFragment.OnCreateFragmentViewListener {
+
+    private static final String TAG = MovieDetailActivity.class.getSimpleName();
+    public static final String EXTRA_ITEM = "com.lecomte.jessy.popularmovies.EXTRA_ITEM";
+
+    /**
+     * The movie data to display
+     */
+    private MovieInfo mItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Intent intent = getIntent();
+
+        if (intent == null || intent.getExtras() == null ||
+                !intent.getExtras().containsKey(EXTRA_ITEM)) {
+            Log.d(TAG, "onCreate() - Intent is null, intent extra is null or extra not found");
+        }
+
+        mItem = intent.getExtras().getParcelable(EXTRA_ITEM);
+
+        if (mItem == null) {
+            Log.d(TAG, "onCreate() - item is null!");
+        }
+
+        //Activity activity = this.getActivity();
+        CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
+        if (appBarLayout != null) {
+            appBarLayout.setTitle(mItem.getTitle());
+        }
+
         setContentView(R.layout.activity_movie_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -48,6 +82,11 @@ public class MovieDetailActivity extends AppCompatActivity {
                     .add(R.id.fragment_container, fragment)
                     .commit();
         }*/
+    }
+
+    @Override
+    public MovieInfo onCreateFragmentView() {
+        return mItem;
     }
 
     /*@Override
