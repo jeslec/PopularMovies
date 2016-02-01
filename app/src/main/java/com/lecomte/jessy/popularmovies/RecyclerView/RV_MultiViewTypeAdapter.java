@@ -90,6 +90,8 @@ public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.V
                 vhViewType0.voteAverageTextView.setText(vhViewType0.item.getVote_average() +
                         AVERAGE_RATING_SUFFIX);
 
+                vhViewType0.summaryTextView.setText(vhViewType0.item.getOverview());
+
                 /*vhViewType0.itemTitleTextView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

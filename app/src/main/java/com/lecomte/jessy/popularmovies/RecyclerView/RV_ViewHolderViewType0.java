@@ -17,6 +17,7 @@ public class RV_ViewHolderViewType0 extends RecyclerView.ViewHolder {
     public TextView releaseDateTextView;
     public TextView voteAverageTextView;
     public ImageView posterTextView;
+    public TextView summaryTextView;
     public MovieInfo item;
 
     public RV_ViewHolderViewType0(View view) {
@@ -25,6 +26,7 @@ public class RV_ViewHolderViewType0 extends RecyclerView.ViewHolder {
         posterTextView = (ImageView) view.findViewById(R.id.detail_poster_ImageView);
         releaseDateTextView = (TextView)view.findViewById(R.id.detail_releaseDate_TextView);
         voteAverageTextView = (TextView)view.findViewById(R.id.detail_voteAverage_TextView);
+        summaryTextView = (TextView) view.findViewById(R.id.detail_summary_TextView);
     }
 
     @Override
