@@ -1,0 +1,112 @@
+package com.lecomte.jessy.popularmovies.RecyclerView;
+
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
+
+import com.lecomte.jessy.popularmovies.R;
+
+import java.util.List;
+
+// Only for a single viewType (means 1 layout is used for all items)
+// Only for data that is represented as List<Data>
+
+public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    private static final String TAG = RV_MultiViewTypeAdapter.class.getSimpleName();
+
+    private static final int VIEW_TYPE_0 = 0;
+    private static final int VIEW_TYPE_1 = 1;
+
+    // The data to display in the RecyclerView
+    // TODO: Change the data type so it represents the data to be displayed by the RecyclerView
+    // e.g. List<String) for display strings, List<Cars> for displaying cars, etc.
+    private List<RecyclerViewData> mDataList;
+
+    // Layout Id for a single row (or item) of the RecyclerView
+    private int mItemLayoutId;
+
+    // TODO: Change the data type so it represents the data to be displayed by the RecyclerView
+    // e.g. List<String) for display strings, List<Cars> for displaying cars, etc.
+    // Set the layout Id to the layout for a single row (item) in the RecyclerView list
+    public RV_MultiViewTypeAdapter(List<RecyclerViewData> dataList) {
+        mDataList = dataList;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        // Limit view type to 0 or 1
+        return Math.min(1, position % 2);
+    }
+
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
+        RecyclerView.ViewHolder viewHolder = null;
+        View view;
+
+        switch (viewType) {
+
+            case VIEW_TYPE_0:
+                // Inflate one item of the RecyclerView
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_item_viewtype0, parent, false);
+                return new RV_ViewHolderViewType0(view);
+
+            case VIEW_TYPE_1:
+                // Inflate one item of the RecyclerView
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_item_viewtype1, parent, false);
+                return new RV_ViewHolderViewType1(view);
+        }
+
+        return viewHolder;
+    }
+
+    // Put the data to display (list item) inside each view (TextView, ImageView, etc.)
+    // This is called for each row of the recyclerView
+    @Override
+    public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, int position) {
+        RecyclerViewData item = mDataList.get(position);
+
+        switch (getItemViewType(position)) {
+            case VIEW_TYPE_0:
+                // Set onClick listener on view holder (vh)
+                final RV_ViewHolderViewType0 vhViewType0 = (RV_ViewHolderViewType0)viewHolder;
+                vhViewType0.itemTitleTextView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(vhViewType0.itemTitleTextView.getContext(),
+                                vhViewType0.itemTitleTextView.getText(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                //***** Assign a value to each view contained in the view holder **************
+                vhViewType0.itemTitleTextView.setText(item.name);
+
+                break;
+
+            case VIEW_TYPE_1:
+                final RV_ViewHolderViewType1 viewHolderViewType1 = (RV_ViewHolderViewType1)viewHolder;
+
+                viewHolderViewType1.itemImageView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(viewHolderViewType1.itemImageView.getContext(),
+                                "Image clicked", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                //***** Assign a value to each view contained in the view holder **************
+                viewHolderViewType1.itemImageView.setImageResource(R.drawable.hero);
+                viewHolderViewType1.itemNameTextView.setText(item.name);
+
+                break;
+        }
+    }
+
+    @Override
+    public int getItemCount() {
+        return mDataList.size();
+    }
+}

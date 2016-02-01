@@ -14,24 +14,18 @@ import com.lecomte.jessy.mythemoviedblib.MovieDataUrlBuilder;
 import com.lecomte.jessy.mythemoviedblib.data.MovieInfo;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
-/**
- * Created by Jessy on 2016-01-27.
- */
-public class MovieListRecyclerViewAdapter
-        extends RecyclerView.Adapter<MovieListRecyclerViewAdapter.MovieListViewHolder> {
+public class MovieDetailRecyclerViewAdapter
+        extends RecyclerView.Adapter<MovieDetailRecyclerViewAdapter.MovieDetailViewHolder> {
 
     private final FragmentActivity mFragmentActivity;
     private final boolean mTwoPane;
 
     // Data to be displayed in the RecyclerView
-    private ArrayList<MovieInfo> mData;
+    private MovieInfo mMovieInfo;
 
-    public MovieListRecyclerViewAdapter(FragmentActivity activity, boolean twoPane,
-                                        MovieInfo[] resultsArray) {
-        mData = new ArrayList<MovieInfo>(Arrays.asList(resultsArray));
+    public MovieDetailRecyclerViewAdapter(FragmentActivity activity, boolean twoPane,
+                                        MovieInfo movieInfo) {
+        mMovieInfo = movieInfo;
         mFragmentActivity = activity;
         mTwoPane = twoPane;
     }
@@ -43,15 +37,15 @@ public class MovieListRecyclerViewAdapter
     }*/
 
     @Override
-    public MovieListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public MovieDetailViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.movie_list_content, parent, false);
-        return new MovieListViewHolder(view);
+                .inflate(R.layout.movie_info_content, parent, false);
+        return new MovieDetailViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(final MovieListViewHolder holder, int position) {
-        holder.mItem = mData.get(position);
+    public void onBindViewHolder(final MovieDetailViewHolder holder, int position) {
+        holder.mItem = mMovieInfo;
         String posterUrl = MovieDataUrlBuilder.buildPosterUrl(holder.mItem.getPoster_path());
         //Log.d(TAG, String.format("[%d]: %s", position, posterUrl));
 
@@ -65,15 +59,15 @@ public class MovieListRecyclerViewAdapter
                 if (mTwoPane) {
                     Bundle arguments = new Bundle();
                     arguments.putParcelable(MovieDetailFragment_old.ARG_ITEM, holder.mItem);
-                    MovieDetailFragment fragment = new MovieDetailFragment();
+                    MovieDetailFragment_old fragment = new MovieDetailFragment_old();
                     fragment.setArguments(arguments);
                     mFragmentActivity.getSupportFragmentManager().beginTransaction()
                             .replace(R.id.movie_detail_container, fragment)
                             .commit();
                 } else {
                     Context context = v.getContext();
-                    Intent intent = new Intent(context, MovieDetailActivity.class);
-                    //intent.putExtra(MovieDetailFragment.ARG_ITEM, holder.mItem);
+                    Intent intent = new Intent(context, MovieDetailActivity_old.class);
+                    intent.putExtra(MovieDetailFragment_old.ARG_ITEM, holder.mItem);
 
                     context.startActivity(intent);
                 }
@@ -83,15 +77,15 @@ public class MovieListRecyclerViewAdapter
 
     @Override
     public int getItemCount() {
-        return mData.size();
+        return 1; //mMovieInfo.size();
     }
 
-    public class MovieListViewHolder extends RecyclerView.ViewHolder {
+    public class MovieDetailViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public ImageView posterImageView;
         public MovieInfo mItem;
 
-        public MovieListViewHolder(View view) {
+        public MovieDetailViewHolder(View view) {
             super(view);
             mView = view;
             posterImageView = (ImageView)view.findViewById(R.id.movie_list_poster_ImageView);
