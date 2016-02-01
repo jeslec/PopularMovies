@@ -33,6 +33,8 @@ public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.V
     private final FragmentActivity mFragmentActivity;
     private final boolean mTwoPane;
 
+    private int mItemCount = 0;
+
     // Layout Id for a single row (or item) of the RecyclerView
     private int mItemLayoutId;
 
@@ -42,17 +44,25 @@ public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.V
         mFragmentActivity = activity;
         mTwoPane = twoPane;
         mTrailerArray = trailerArray;
+
+        if (movieInfo != null) {
+            mItemCount++;
+        }
+
+        if (trailerArray != null) {
+            mItemCount += trailerArray.length;
+        }
     }
 
     @Override
     public int getItemViewType(int position) {
 
         if (position == 0) {
-            return 0;
+            return VIEW_TYPE_0;
         }
 
         else {
-            return 1;
+            return VIEW_TYPE_1;
         }
     }
 
@@ -118,7 +128,7 @@ public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.V
 
             case VIEW_TYPE_1:
                 final RV_ViewHolderViewType1 vhViewType1 = (RV_ViewHolderViewType1)viewHolder;
-                TrailerInfo trailerInfo = mTrailerArray[0];
+                TrailerInfo trailerInfo = mTrailerArray[position-1];
                 vhViewType1.trailerTitleTextView.setText(trailerInfo.getName());
                 break;
         }
@@ -126,7 +136,6 @@ public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     @Override
     public int getItemCount() {
-        // TODO: fix this
-        return 2; // mDataList.size();
+        return mItemCount;
     }
 }
