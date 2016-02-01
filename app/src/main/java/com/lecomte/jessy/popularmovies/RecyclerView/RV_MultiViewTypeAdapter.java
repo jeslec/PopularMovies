@@ -18,7 +18,10 @@ public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     private static final String TAG = RV_MultiViewTypeAdapter.class.getSimpleName();
 
+    // Movie info (poster, release date, rating, summary)
     private static final int VIEW_TYPE_0 = 0;
+
+    // Trailers (trailers section title, play button, trailer title)
     private static final int VIEW_TYPE_1 = 1;
 
     private static final String AVERAGE_RATING_SUFFIX = "/10";
