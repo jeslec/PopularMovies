@@ -15,4 +15,8 @@ public class IndexViewTypePair {
     public int getViewType() {
         return mViewType;
     }
+
+    public int getIndex() {
+        return mIndex;
+    }
 }

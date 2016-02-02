@@ -18,7 +18,6 @@ import com.lecomte.jessy.mythemoviedblib.MovieDataUrlBuilder;
 import com.lecomte.jessy.mythemoviedblib.TheMovieDbJsonParser;
 import com.lecomte.jessy.mythemoviedblib.data.MovieInfo;
 import com.lecomte.jessy.mythemoviedblib.data.Reviews;
-import com.lecomte.jessy.mythemoviedblib.data.TrailerInfo;
 import com.lecomte.jessy.mythemoviedblib.data.Trailers;
 import com.lecomte.jessy.popularmovies.RecyclerView.RV_MultiViewTypeAdapter;
 
@@ -43,6 +42,8 @@ public class MovieDetailFragment extends Fragment {
     private MovieInfo mItem;
     private OnCreateFragmentViewListener mCallback;
     private RecyclerView mRecyclerView;
+    private Trailers mTrailersData;
+    private Reviews mReviewsData;
 
     public MovieDetailFragment() {
     }
@@ -116,19 +117,21 @@ public class MovieDetailFragment extends Fragment {
         // Displays the results of the AsyncTask
         @Override
         protected void onPostExecute(Trailers trailersData) {
+            mTrailersData = trailersData;
             Log.d(TAG, trailersData.toString());
-            updateUI(trailersData.getResults());
+            updateUI();
         }
     }
 
-    private void updateUI(TrailerInfo[] trailerArray) {
-        if (trailerArray == null) {
-            Log.d(TAG, "Trailers data is null!");
+    private void updateUI() {
+        if (mTrailersData == null || mReviewsData == null) {
+            Log.d(TAG, "Trailers data or Reviews data is null");
             return;
         }
 
         RV_MultiViewTypeAdapter recyclerViewAdapter =
-                new RV_MultiViewTypeAdapter(getActivity(), false, mItem, trailerArray);
+                new RV_MultiViewTypeAdapter(getActivity(), false, mItem, mTrailersData.getResults(),
+                        mReviewsData.getResults());
 
         mRecyclerView.setAdapter(recyclerViewAdapter);
     }
@@ -153,10 +156,8 @@ public class MovieDetailFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Reviews reviews) {
-            if (reviews == null) {
-                Log.d(TAG, "Reviews data is null!");
-                return;
-            }
+           mReviewsData = reviews;
+           updateUI();
         }
     }
 }

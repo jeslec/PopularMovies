@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.lecomte.jessy.mythemoviedblib.MovieDataUrlBuilder;
 import com.lecomte.jessy.mythemoviedblib.data.MovieInfo;
+import com.lecomte.jessy.mythemoviedblib.data.Results;
 import com.lecomte.jessy.mythemoviedblib.data.TrailerInfo;
 import com.lecomte.jessy.popularmovies.R;
 import com.squareup.picasso.Picasso;
@@ -29,9 +30,16 @@ public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.V
     // Movie info (poster, release date, rating, summary)
     private static final int VIEW_TYPE_0 = 0;
 
-    // Trailers (trailers section title, play button, trailer title)
+    // A single trailer (play button, trailer title)
     private static final int VIEW_TYPE_1 = 1;
+
+    // A single review
+    private static final int VIEW_TYPE_2 = 2;
+
     private static final String YOUTUBE_URL = "https://www.youtube.com/watch?v=";
+    private final Results[] mReviewArray;
+    private int mFirstTrailerIndex = 0;
+    private int mFirstReviewIndex = 0;
 
     // TODO: explain what this is
     private List<IndexViewTypePair> mIndexViewTypePairList;
@@ -50,11 +58,13 @@ public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.V
     private int mItemLayoutId;
 
     public RV_MultiViewTypeAdapter(FragmentActivity activity, boolean twoPane,
-                                   MovieInfo movieInfo, TrailerInfo[] trailerArray) {
+                                   MovieInfo movieInfo, TrailerInfo[] trailerArray,
+                                   Results[] reviewArray) {
         mMovieInfo = movieInfo;
         mFragmentActivity = activity;
         mTwoPane = twoPane;
         mTrailerArray = trailerArray;
+        mReviewArray = reviewArray;
         mIndexViewTypePairList = new ArrayList<>();
 
         if (movieInfo != null) {
@@ -62,11 +72,21 @@ public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.V
             mIndexViewTypePairList.add(new IndexViewTypePair(0, VIEW_TYPE_0));
         }
 
-        if (trailerArray != null) {
-            mItemCount += trailerArray.length;
+        if (mTrailerArray != null) {
+            mFirstTrailerIndex = mIndexViewTypePairList.size();
+            mItemCount += mTrailerArray.length;
 
-            for (int i=0; i<trailerArray.length; i++) {
+            for (int i=0; i<mTrailerArray.length; i++) {
                 mIndexViewTypePairList.add(new IndexViewTypePair(i, VIEW_TYPE_1));
+            }
+        }
+
+        if (mReviewArray != null) {
+            mFirstReviewIndex =  mIndexViewTypePairList.size();
+            mItemCount += mReviewArray.length;
+
+            for (int i=0; i<mReviewArray.length; i++) {
+                mIndexViewTypePairList.add(new IndexViewTypePair(i, VIEW_TYPE_2));
             }
         }
     }
@@ -93,6 +113,11 @@ public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.V
                 view = LayoutInflater.from(parent.getContext()).inflate(
                         R.layout.recyclerview_item_viewtype1, parent, false);
                 return new RV_ViewHolderViewType1(view);
+
+            case VIEW_TYPE_2:
+                view = LayoutInflater.from(parent.getContext()).inflate(
+                        R.layout.recyclerview_item_viewtype2, parent, false);
+                return new RV_ViewHolderViewType2(view);
         }
 
         return viewHolder;
@@ -102,7 +127,8 @@ public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.V
     // This is called for each row of the recyclerView
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, int position) {
-        //RecyclerViewData item = mDataList.get(position);
+        int itemIndex;
+        final Context context = viewHolder.itemView.getContext();
 
         switch (getItemViewType(position)) {
             case VIEW_TYPE_0:
@@ -128,9 +154,9 @@ public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.V
 
             case VIEW_TYPE_1:
                 final RV_ViewHolderViewType1 vhViewType1 = (RV_ViewHolderViewType1)viewHolder;
-                final TrailerInfo trailerInfo = mTrailerArray[position-1];
+                itemIndex = mIndexViewTypePairList.get(position).getIndex();
+                final TrailerInfo trailerInfo = mTrailerArray[itemIndex];
                 vhViewType1.trailerTitleTextView.setText(trailerInfo.getName());
-                final Context context = vhViewType1.playTrailerImageView.getContext();
 
                 vhViewType1.playTrailerImageView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -144,6 +170,15 @@ public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.V
                                 trailerInfo.getKey())));
                     }
                 });
+                break;
+
+            case VIEW_TYPE_2:
+                final RV_ViewHolderViewType2 vhViewType2 = (RV_ViewHolderViewType2)viewHolder;
+                itemIndex = mIndexViewTypePairList.get(position).getIndex();
+                final Results reviewInfo = mReviewArray[itemIndex];
+                vhViewType2.reviewAuthorTextView.setText(context.getString(
+                        R.string.review_author_prefix) + " " + reviewInfo.getAuthor());
+                vhViewType2.reviewContentTextView.setText(reviewInfo.getContent());
                 break;
         }
     }
