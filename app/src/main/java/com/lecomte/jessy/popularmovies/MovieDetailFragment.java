@@ -17,6 +17,7 @@ import com.lecomte.jessy.mynetworklib.NetworkUtils;
 import com.lecomte.jessy.mythemoviedblib.MovieDataUrlBuilder;
 import com.lecomte.jessy.mythemoviedblib.TheMovieDbJsonParser;
 import com.lecomte.jessy.mythemoviedblib.data.MovieInfo;
+import com.lecomte.jessy.mythemoviedblib.data.Reviews;
 import com.lecomte.jessy.mythemoviedblib.data.TrailerInfo;
 import com.lecomte.jessy.mythemoviedblib.data.Trailers;
 import com.lecomte.jessy.popularmovies.RecyclerView.RV_MultiViewTypeAdapter;
@@ -54,6 +55,9 @@ public class MovieDetailFragment extends Fragment {
 
         new downloadTrailerDataTask().execute(MovieDataUrlBuilder.buildTrailersUrl(
                 MovieListActivity.TMDB_API_KEY, mItem.getId()));
+
+        new downloadReviewsTask().execute(MovieDataUrlBuilder.buildReviewsUrl(
+                MovieListActivity.TMDB_API_KEY, mItem.getId()));
     }
 
     // Container Activity must implement this interface
@@ -84,11 +88,6 @@ public class MovieDetailFragment extends Fragment {
         assert mRecyclerView != null;
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        /*RV_MultiViewTypeAdapter recyclerViewAdapter =
-                new RV_MultiViewTypeAdapter(getActivity(), false, mItem);
-
-        recyclerView.setAdapter(recyclerViewAdapter);*/
-
         return rootView;
     }
 
@@ -98,7 +97,6 @@ public class MovieDetailFragment extends Fragment {
     // an InputStream. Finally, the InputStream is converted into a string, which is
     // displayed in the UI by the AsyncTask's onPostExecute method.
     private class downloadTrailerDataTask extends AsyncTask<String, Void, Trailers> {
-        private final String TAG = downloadTrailerDataTask.class.getSimpleName();
 
         @Override
         protected Trailers doInBackground(String... urls) {
@@ -118,9 +116,7 @@ public class MovieDetailFragment extends Fragment {
         // Displays the results of the AsyncTask
         @Override
         protected void onPostExecute(Trailers trailersData) {
-            //updateUI(trailersData.getResults());
             Log.d(TAG, trailersData.toString());
-
             updateUI(trailersData.getResults());
         }
     }
@@ -135,5 +131,32 @@ public class MovieDetailFragment extends Fragment {
                 new RV_MultiViewTypeAdapter(getActivity(), false, mItem, trailerArray);
 
         mRecyclerView.setAdapter(recyclerViewAdapter);
+    }
+
+    private class downloadReviewsTask extends AsyncTask<String, Void, Reviews> {
+
+        @Override
+        protected Reviews doInBackground(String... urls) {
+
+            // params comes from the execute() call: params[0] is the url.
+            String jsonString = NetworkUtils.downloadData(urls[0]);
+
+            try {
+                // Parse the JSON string into our model layer
+                return TheMovieDbJsonParser.parseReviewsData(jsonString);
+            } catch (JSONException e) {
+                Log.e(TAG, e.getMessage());
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Reviews reviews) {
+            if (reviews == null) {
+                Log.d(TAG, "Reviews data is null!");
+                return;
+            }
+        }
     }
 }

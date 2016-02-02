@@ -2,6 +2,8 @@ package com.lecomte.jessy.mythemoviedblib;
 
 import com.lecomte.jessy.mythemoviedblib.data.MovieInfo;
 import com.lecomte.jessy.mythemoviedblib.data.Movies;
+import com.lecomte.jessy.mythemoviedblib.data.Results;
+import com.lecomte.jessy.mythemoviedblib.data.Reviews;
 import com.lecomte.jessy.mythemoviedblib.data.TrailerInfo;
 import com.lecomte.jessy.mythemoviedblib.data.Trailers;
 
@@ -120,5 +122,47 @@ public class TheMovieDbJsonParser {
         trailers.setResults(resultArray);
 
         return trailers;
+    }
+
+    public static Reviews parseReviewsData(String jsonString) throws JSONException {
+
+        Reviews reviews = new Reviews();
+
+        // These are the names of the JSON objects that need to be extracted
+        // TMDB: The Movie DataBase
+        final String TMDB_REVIEW_ID         = "id";
+        final String TMDB_REVIEW_PAGE       = "page";
+        final String TMDB_REVIEW_RESULTS    = "results";
+        final String TMDB_REVIEW_AUTHOR     = "author";
+        final String TMDB_REVIEW_CONTENT    = "content";
+        final String TMDB_REVIEW_URL        = "url";
+
+        JSONObject reviewsJsonObj = new JSONObject(jsonString);
+
+        // Movie ID for which we are getting the trailers for
+        reviews.setId(reviewsJsonObj.getString(TMDB_REVIEW_ID));
+
+        reviews.setPage(reviewsJsonObj.getString(TMDB_REVIEW_PAGE));
+
+        // Array of review info
+        JSONArray reviewsArray = reviewsJsonObj.getJSONArray(TMDB_REVIEW_RESULTS);
+        Results[] resultArray = new Results[reviewsArray.length()];
+
+        for(int i = 0; i < reviewsArray.length(); i++) {
+            resultArray[i] = new Results();
+
+            // Get the JSON object representing a movie
+            JSONObject trailer = reviewsArray.getJSONObject(i);
+
+            // Extract data from the JSON object
+            resultArray[i].setId(trailer.getString(TMDB_REVIEW_ID));
+            resultArray[i].setAuthor(trailer.getString(TMDB_REVIEW_AUTHOR));
+            resultArray[i].setContent(trailer.getString(TMDB_REVIEW_CONTENT));
+            resultArray[i].setUrl(trailer.getString(TMDB_REVIEW_URL));
+        }
+
+        reviews.setResults(resultArray);
+
+        return reviews;
     }
 }
