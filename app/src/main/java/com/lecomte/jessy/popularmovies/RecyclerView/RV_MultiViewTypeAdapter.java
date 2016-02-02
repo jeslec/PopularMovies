@@ -123,7 +123,7 @@ public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.V
                         AVERAGE_RATING_SUFFIX);
 
                 vhViewType0.summaryTextView.setText(vhViewType0.item.getOverview());
-                
+
                 break;
 
             case VIEW_TYPE_1:
@@ -139,6 +139,7 @@ public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.V
                                 "Play trailer: " + vhViewType1.trailerTitleTextView.getText(),
                                 Toast.LENGTH_SHORT).show();
 
+                        // http://stackoverflow.com/questions/4654878/how-to-play-youtube-video-in-my-android-application
                         context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(YOUTUBE_URL +
                                 trailerInfo.getKey())));
                     }
