@@ -71,12 +71,17 @@ public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.V
 
         // TODO: explain what this is
         mSectionTitleResList = new ArrayList<Integer>();
+        mSectionTitleResList.add(R.string.trailers_section_title);
         mSectionTitleResList.add(R.string.reviews_section_title);
 
         if (movieInfo != null) {
             mItemCount++;
             mIndexViewTypePairList.add(new IndexViewTypePair(0, VIEW_TYPE_0));
         }
+
+        // Add trailers section title
+        mItemCount++;
+        mIndexViewTypePairList.add(new IndexViewTypePair(0, VIEW_TYPE_3));
 
         if (mTrailerArray != null) {
             mItemCount += mTrailerArray.length;
@@ -88,7 +93,7 @@ public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.V
 
         // Add reviews section title
         mItemCount++;
-        mIndexViewTypePairList.add(new IndexViewTypePair(0, VIEW_TYPE_3));
+        mIndexViewTypePairList.add(new IndexViewTypePair(1, VIEW_TYPE_3));
 
         if (mReviewArray != null) {
             mItemCount += mReviewArray.length;

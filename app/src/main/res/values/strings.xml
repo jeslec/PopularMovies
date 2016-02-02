@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Popular Movies</string>
     <string name="title_movie_detail">Movie Detail</string>
-    <string name="detail_trailers_title">Trailers</string>
+    <string name="trailers_section_title">Trailers</string>
     <string name="review_author_prefix">Review by</string>
     <string name="reviews_section_title">Reviews</string>
 </resources>
