@@ -50,7 +50,7 @@ public class MovieListActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar.setTitle(getTitle());
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -58,7 +58,7 @@ public class MovieListActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
-
+*/
         mRecyclerView = (RecyclerView)findViewById(R.id.movie_list);
         assert mRecyclerView != null;
         setupRecyclerView();

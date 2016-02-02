@@ -28,16 +28,16 @@ public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.V
     private static final String TAG = RV_MultiViewTypeAdapter.class.getSimpleName();
 
     // Movie info (poster, release date, rating, summary)
-    private static final int VIEW_TYPE_0 = 0;
+    private static final int VIEW_TYPE_0_MOVIE_INFO = 0;
 
     // A single trailer (play button, trailer title)
-    private static final int VIEW_TYPE_1 = 1;
+    private static final int VIEW_TYPE_1_TRAILER = 1;
 
     // A single review (review author, review content)
-    private static final int VIEW_TYPE_2 = 2;
+    private static final int VIEW_TYPE_2_REVIEW = 2;
 
-    // Simple text (used for section headers. E.g. trailers, reviews, etc.)
-    private static final int VIEW_TYPE_3 = 3;
+    // Simple text (used for section titles/headers. E.g. trailers, reviews, etc.)
+    private static final int VIEW_TYPE_3_TITLE = 3;
 
     private static final String YOUTUBE_URL = "https://www.youtube.com/watch?v=";
     private final Results[] mReviewArray;
@@ -69,37 +69,38 @@ public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.V
         mReviewArray = reviewArray;
         mIndexViewTypePairList = new ArrayList<>();
 
-        // TODO: explain what this is
+        // Holds the list of string resources Ids for the section titles
+        // Use this list index in the <index, viewType> pair
         mSectionTitleResList = new ArrayList<Integer>();
         mSectionTitleResList.add(R.string.trailers_section_title);
         mSectionTitleResList.add(R.string.reviews_section_title);
 
         if (movieInfo != null) {
             mItemCount++;
-            mIndexViewTypePairList.add(new IndexViewTypePair(0, VIEW_TYPE_0));
+            mIndexViewTypePairList.add(new IndexViewTypePair(0, VIEW_TYPE_0_MOVIE_INFO));
         }
 
         // Add trailers section title
         mItemCount++;
-        mIndexViewTypePairList.add(new IndexViewTypePair(0, VIEW_TYPE_3));
+        mIndexViewTypePairList.add(new IndexViewTypePair(0, VIEW_TYPE_3_TITLE));
 
         if (mTrailerArray != null) {
             mItemCount += mTrailerArray.length;
 
             for (int i=0; i<mTrailerArray.length; i++) {
-                mIndexViewTypePairList.add(new IndexViewTypePair(i, VIEW_TYPE_1));
+                mIndexViewTypePairList.add(new IndexViewTypePair(i, VIEW_TYPE_1_TRAILER));
             }
         }
 
         // Add reviews section title
         mItemCount++;
-        mIndexViewTypePairList.add(new IndexViewTypePair(1, VIEW_TYPE_3));
+        mIndexViewTypePairList.add(new IndexViewTypePair(1, VIEW_TYPE_3_TITLE));
 
         if (mReviewArray != null) {
             mItemCount += mReviewArray.length;
 
             for (int i=0; i<mReviewArray.length; i++) {
-                mIndexViewTypePairList.add(new IndexViewTypePair(i, VIEW_TYPE_2));
+                mIndexViewTypePairList.add(new IndexViewTypePair(i, VIEW_TYPE_2_REVIEW));
             }
         }
     }
@@ -117,22 +118,22 @@ public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.V
 
         switch (viewType) {
 
-            case VIEW_TYPE_0:
+            case VIEW_TYPE_0_MOVIE_INFO:
                 view = LayoutInflater.from(parent.getContext()).inflate(
                         R.layout.recyclerview_item_viewtype0, parent, false);
                 return new RV_ViewHolderViewType0(view);
 
-            case VIEW_TYPE_1:
+            case VIEW_TYPE_1_TRAILER:
                 view = LayoutInflater.from(parent.getContext()).inflate(
                         R.layout.recyclerview_item_viewtype1, parent, false);
                 return new RV_ViewHolderViewType1(view);
 
-            case VIEW_TYPE_2:
+            case VIEW_TYPE_2_REVIEW:
                 view = LayoutInflater.from(parent.getContext()).inflate(
                         R.layout.recyclerview_item_viewtype2, parent, false);
                 return new RV_ViewHolderViewType2(view);
 
-            case VIEW_TYPE_3:
+            case VIEW_TYPE_3_TITLE:
                 view = LayoutInflater.from(parent.getContext()).inflate(
                         R.layout.recyclerview_item_viewtype3, parent, false);
                 return new RV_ViewHolderViewType3(view);
@@ -149,7 +150,7 @@ public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.V
         final Context context = viewHolder.itemView.getContext();
 
         switch (getItemViewType(position)) {
-            case VIEW_TYPE_0:
+            case VIEW_TYPE_0_MOVIE_INFO:
                 // Set onClick listener on view holder (vh)
                 final RV_ViewHolderViewType0 vhViewType0 = (RV_ViewHolderViewType0)viewHolder;
                 vhViewType0.item = mMovieInfo;
@@ -170,7 +171,7 @@ public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.V
 
                 break;
 
-            case VIEW_TYPE_1:
+            case VIEW_TYPE_1_TRAILER:
                 final RV_ViewHolderViewType1 vhViewType1 = (RV_ViewHolderViewType1)viewHolder;
                 itemIndex = mIndexViewTypePairList.get(position).getIndex();
                 final TrailerInfo trailerInfo = mTrailerArray[itemIndex];
@@ -190,7 +191,7 @@ public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.V
                 });
                 break;
 
-            case VIEW_TYPE_2:
+            case VIEW_TYPE_2_REVIEW:
                 final RV_ViewHolderViewType2 vhViewType2 = (RV_ViewHolderViewType2)viewHolder;
                 itemIndex = mIndexViewTypePairList.get(position).getIndex();
                 final Results reviewInfo = mReviewArray[itemIndex];
@@ -199,7 +200,7 @@ public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.V
                 vhViewType2.reviewContentTextView.setText(reviewInfo.getContent());
                 break;
 
-            case VIEW_TYPE_3:
+            case VIEW_TYPE_3_TITLE:
                 final RV_ViewHolderViewType3 vhViewType3 = (RV_ViewHolderViewType3)viewHolder;
                 itemIndex = mIndexViewTypePairList.get(position).getIndex();
                 vhViewType3.sectionTitleTextView.setText(
