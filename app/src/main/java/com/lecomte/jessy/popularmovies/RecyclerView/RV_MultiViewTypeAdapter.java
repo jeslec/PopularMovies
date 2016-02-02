@@ -33,13 +33,14 @@ public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.V
     // A single trailer (play button, trailer title)
     private static final int VIEW_TYPE_1 = 1;
 
-    // A single review
+    // A single review (review author, review content)
     private static final int VIEW_TYPE_2 = 2;
+
+    // Simple text (used for section headers. E.g. trailers, reviews, etc.)
+    private static final int VIEW_TYPE_3 = 3;
 
     private static final String YOUTUBE_URL = "https://www.youtube.com/watch?v=";
     private final Results[] mReviewArray;
-    private int mFirstTrailerIndex = 0;
-    private int mFirstReviewIndex = 0;
 
     // TODO: explain what this is
     private List<IndexViewTypePair> mIndexViewTypePairList;
@@ -51,6 +52,7 @@ public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.V
     private MovieInfo mMovieInfo;
     private FragmentActivity mFragmentActivity;
     private boolean mTwoPane;
+    private List<Integer> mSectionTitleResList;
 
     private int mItemCount = 0;
 
@@ -67,13 +69,16 @@ public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.V
         mReviewArray = reviewArray;
         mIndexViewTypePairList = new ArrayList<>();
 
+        // TODO: explain what this is
+        mSectionTitleResList = new ArrayList<Integer>();
+        mSectionTitleResList.add(R.string.reviews_section_title);
+
         if (movieInfo != null) {
             mItemCount++;
             mIndexViewTypePairList.add(new IndexViewTypePair(0, VIEW_TYPE_0));
         }
 
         if (mTrailerArray != null) {
-            mFirstTrailerIndex = mIndexViewTypePairList.size();
             mItemCount += mTrailerArray.length;
 
             for (int i=0; i<mTrailerArray.length; i++) {
@@ -81,8 +86,11 @@ public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.V
             }
         }
 
+        // Add reviews section title
+        mItemCount++;
+        mIndexViewTypePairList.add(new IndexViewTypePair(0, VIEW_TYPE_3));
+
         if (mReviewArray != null) {
-            mFirstReviewIndex =  mIndexViewTypePairList.size();
             mItemCount += mReviewArray.length;
 
             for (int i=0; i<mReviewArray.length; i++) {
@@ -118,6 +126,11 @@ public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.V
                 view = LayoutInflater.from(parent.getContext()).inflate(
                         R.layout.recyclerview_item_viewtype2, parent, false);
                 return new RV_ViewHolderViewType2(view);
+
+            case VIEW_TYPE_3:
+                view = LayoutInflater.from(parent.getContext()).inflate(
+                        R.layout.recyclerview_item_viewtype3, parent, false);
+                return new RV_ViewHolderViewType3(view);
         }
 
         return viewHolder;
@@ -179,6 +192,13 @@ public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.V
                 vhViewType2.reviewAuthorTextView.setText(context.getString(
                         R.string.review_author_prefix) + " " + reviewInfo.getAuthor());
                 vhViewType2.reviewContentTextView.setText(reviewInfo.getContent());
+                break;
+
+            case VIEW_TYPE_3:
+                final RV_ViewHolderViewType3 vhViewType3 = (RV_ViewHolderViewType3)viewHolder;
+                itemIndex = mIndexViewTypePairList.get(position).getIndex();
+                vhViewType3.sectionTitleTextView.setText(
+                        context.getString(mSectionTitleResList.get(itemIndex)));
                 break;
         }
     }
