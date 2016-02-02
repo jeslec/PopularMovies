@@ -34,7 +34,7 @@ public class MovieDetailFragment extends Fragment {
      */
     public static final String ARG_ITEM = "item";
     private static final String AVERAGE_RATING_SUFFIX = "/10";
-    private static final String TAG = MovieDetailFragment_old.class.getSimpleName();
+    private static final String TAG = MovieDetailFragment.class.getSimpleName();
 
     /**
      * The movie data to display

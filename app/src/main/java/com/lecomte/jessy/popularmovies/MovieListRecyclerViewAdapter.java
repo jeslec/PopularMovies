@@ -64,7 +64,7 @@ public class MovieListRecyclerViewAdapter
             public void onClick(View v) {
                 if (mTwoPane) {
                     Bundle arguments = new Bundle();
-                    arguments.putParcelable(MovieDetailFragment_old.ARG_ITEM, holder.mItem);
+                    arguments.putParcelable(MovieDetailFragment.ARG_ITEM, holder.mItem);
                     MovieDetailFragment fragment = new MovieDetailFragment();
                     fragment.setArguments(arguments);
                     mFragmentActivity.getSupportFragmentManager().beginTransaction()
