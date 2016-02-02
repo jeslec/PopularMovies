@@ -23,6 +23,8 @@ public class MovieDetailActivity extends AppCompatActivity
      */
     private MovieInfo mItem;
 
+    private boolean mFavoriteMovie = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,12 +47,28 @@ public class MovieDetailActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.favorite_fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                // Change icon to filled icon
+                FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.favorite_fab);
+
+                if (fab != null) {
+                    if (mFavoriteMovie) {
+                        // Set icon to unfilled star
+                        fab.setImageResource(R.drawable.ic_star_border_white_48dp);
+                    }
+                    else {
+                        // Set icon to filled star
+                        fab.setImageResource(R.drawable.ic_star_white_48dp);
+                        
+                        Snackbar.make(view, "Movie added to your favorites", Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
+                    }
+                    // Toggle favorite state
+                    mFavoriteMovie = !mFavoriteMovie;
+                }
             }
         });
 
