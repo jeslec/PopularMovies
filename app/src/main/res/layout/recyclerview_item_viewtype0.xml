@@ -43,7 +43,7 @@
     <TextView
         android:id="@+id/detail_summary_TextView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:padding="16dp"
         android:textIsSelectable="true"
         style="?android:attr/textAppearanceMedium"/>
@@ -57,5 +57,12 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginBottom="0dp"/>
+
+    <TextView
+        android:id="@+id/detail_trailers_title_TextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/detail_trailers_title"
+        android:padding="16dp"/>
 
 </LinearLayout>

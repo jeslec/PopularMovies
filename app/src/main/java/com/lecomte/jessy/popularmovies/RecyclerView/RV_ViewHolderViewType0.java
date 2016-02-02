@@ -13,6 +13,7 @@ import com.lecomte.jessy.mythemoviedblib.data.MovieInfo;
 import com.lecomte.jessy.popularmovies.R;
 
 public class RV_ViewHolderViewType0 extends RecyclerView.ViewHolder {
+    public TextView trailersSectionTextView;
     public View mView;
     public TextView releaseDateTextView;
     public TextView voteAverageTextView;

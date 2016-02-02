@@ -1,16 +1,23 @@
 package com.lecomte.jessy.popularmovies.RecyclerView;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.lecomte.jessy.mythemoviedblib.MovieDataUrlBuilder;
 import com.lecomte.jessy.mythemoviedblib.data.MovieInfo;
 import com.lecomte.jessy.mythemoviedblib.data.TrailerInfo;
 import com.lecomte.jessy.popularmovies.R;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.List;
 
 // Only for a single viewType (means 1 layout is used for all items)
 // Only for data that is represented as List<Data>
@@ -24,14 +31,18 @@ public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     // Trailers (trailers section title, play button, trailer title)
     private static final int VIEW_TYPE_1 = 1;
+    private static final String YOUTUBE_URL = "https://www.youtube.com/watch?v=";
+
+    // TODO: explain what this is
+    private List<IndexViewTypePair> mIndexViewTypePairList;
 
     private static final String AVERAGE_RATING_SUFFIX = "/10";
-    private final TrailerInfo[] mTrailerArray;
+    private TrailerInfo[] mTrailerArray;
 
     // Data to be displayed in the RecyclerView
     private MovieInfo mMovieInfo;
-    private final FragmentActivity mFragmentActivity;
-    private final boolean mTwoPane;
+    private FragmentActivity mFragmentActivity;
+    private boolean mTwoPane;
 
     private int mItemCount = 0;
 
@@ -44,26 +55,25 @@ public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.V
         mFragmentActivity = activity;
         mTwoPane = twoPane;
         mTrailerArray = trailerArray;
+        mIndexViewTypePairList = new ArrayList<>();
 
         if (movieInfo != null) {
             mItemCount++;
+            mIndexViewTypePairList.add(new IndexViewTypePair(0, VIEW_TYPE_0));
         }
 
         if (trailerArray != null) {
             mItemCount += trailerArray.length;
+
+            for (int i=0; i<trailerArray.length; i++) {
+                mIndexViewTypePairList.add(new IndexViewTypePair(i, VIEW_TYPE_1));
+            }
         }
     }
 
     @Override
     public int getItemViewType(int position) {
-
-        if (position == 0) {
-            return VIEW_TYPE_0;
-        }
-
-        else {
-            return VIEW_TYPE_1;
-        }
+        return mIndexViewTypePairList.get(position).getViewType();
     }
 
     @Override
@@ -75,13 +85,11 @@ public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.V
         switch (viewType) {
 
             case VIEW_TYPE_0:
-                // Inflate one item of the RecyclerView
                 view = LayoutInflater.from(parent.getContext()).inflate(
                         R.layout.recyclerview_item_viewtype0, parent, false);
                 return new RV_ViewHolderViewType0(view);
 
             case VIEW_TYPE_1:
-                // Inflate one item of the RecyclerView
                 view = LayoutInflater.from(parent.getContext()).inflate(
                         R.layout.recyclerview_item_viewtype1, parent, false);
                 return new RV_ViewHolderViewType1(view);
@@ -115,27 +123,32 @@ public class RV_MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.V
                         AVERAGE_RATING_SUFFIX);
 
                 vhViewType0.summaryTextView.setText(vhViewType0.item.getOverview());
-
-                /*vhViewType0.itemTitleTextView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Toast.makeText(vhViewType0.itemTitleTextView.getContext(),
-                                vhViewType0.itemTitleTextView.getText(), Toast.LENGTH_SHORT).show();
-                    }
-                });*/
-
+                
                 break;
 
             case VIEW_TYPE_1:
                 final RV_ViewHolderViewType1 vhViewType1 = (RV_ViewHolderViewType1)viewHolder;
-                TrailerInfo trailerInfo = mTrailerArray[position-1];
+                final TrailerInfo trailerInfo = mTrailerArray[position-1];
                 vhViewType1.trailerTitleTextView.setText(trailerInfo.getName());
+                final Context context = vhViewType1.playTrailerImageView.getContext();
+
+                vhViewType1.playTrailerImageView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(vhViewType1.playTrailerImageView.getContext(),
+                                "Play trailer: " + vhViewType1.trailerTitleTextView.getText(),
+                                Toast.LENGTH_SHORT).show();
+
+                        context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(YOUTUBE_URL +
+                                trailerInfo.getKey())));
+                    }
+                });
                 break;
         }
     }
 
     @Override
     public int getItemCount() {
-        return mItemCount;
+        return mIndexViewTypePairList.size();
     }
 }

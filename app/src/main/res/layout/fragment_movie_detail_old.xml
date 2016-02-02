@@ -65,7 +65,7 @@
         android:padding="16dp"
         android:textIsSelectable="true"
         style="?android:attr/textAppearanceMedium"
-        android:text="@string/detail_trailers_label"/>
+        android:text="@string/detail_trailers_title"/>
 
     <ListView
         android:id="@+id/detail_trailers_ListView"
