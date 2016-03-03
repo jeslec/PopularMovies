@@ -1,7 +1,11 @@
 package com.lecomte.jessy.mythemoviedblib;
 
+import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.util.Log;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
  * Created by Jessy on 2016-01-26.
@@ -9,11 +13,27 @@ import android.util.Log;
 public class MovieDataUrlBuilder {
     private static final String TAG = MovieDataUrlBuilder.class.getSimpleName();
 
+    //Define the list of accepted constants
+    @IntDef({SORT_BY_MOST_POPULAR, SORT_BY_HIGHEST_RATED})
+
+    //Tell the compiler not to store annotation data in the .class file
+    @Retention(RetentionPolicy.SOURCE)
+
+    //Declare the NavigationMode annotation
+    public @interface SortCriteria {}
+
+    // Criteria used to sort the movies
+    public static final int SORT_CRITERIA_COUNT     = 2;
+    public static final int SORT_BY_MOST_POPULAR    = 0;
+    public static final int SORT_BY_HIGHEST_RATED   = 1;
+
     // API Endpoints for TMDB (The Movie DataBase)
 
     // Discover URL
-    private static final String TMDB_URL_DISCOVER =
-            "http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=";
+    private static final String TMDB_BASE_URL = "http://api.themoviedb.org/3/discover/movie";
+    private static final String TMDB_SORT_BY_MOST_POPULAR   = "?sort_by=popularity.desc";
+    private static final String TMDB_SORT_BY_HIGHEST_RATED  = "?sort_by=vote_average.desc";
+    private static final String TMDB_API_KEY = "&api_key=";
 
     // Reviews URL
     // URL = TMDB_URL_REVIEWS_PREFIX + { movieID } + TMDB_URL_REVIEWS_SUFFIX + TMDB_API_KEY_PARAM
@@ -33,12 +53,26 @@ public class MovieDataUrlBuilder {
     // details fragment. Should this be somewhere else, perhaps? In preferences, maybe???
     public static final String BASE_POSTER_URL = "http://image.tmdb.org/t/p/w342";//w185";
 
-    public static String buildDiscoverUrl(@NonNull String apiKey) {
+    public static String buildDiscoverUrl(@NonNull String apiKey, @SortCriteria int sortCriteria) {
+        String url = TMDB_BASE_URL;
+
         if (apiKey == null || apiKey.isEmpty()) {
             Log.d(TAG, "buildDiscoverUrl() - API key is invalid");
             return null;
         }
-        return TMDB_URL_DISCOVER + apiKey;
+
+        // Append sort criteria
+        if (sortCriteria == SORT_BY_HIGHEST_RATED) {
+            url += TMDB_SORT_BY_HIGHEST_RATED;
+        }
+
+        else if (sortCriteria == SORT_BY_MOST_POPULAR) {
+            url += TMDB_SORT_BY_MOST_POPULAR;
+        }
+
+        url += (TMDB_API_KEY + apiKey);
+
+        return url;
     }
 
     public static String buildReviewsUrl(@NonNull String apiKey, @NonNull String movieID) {

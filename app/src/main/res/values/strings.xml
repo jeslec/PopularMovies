@@ -4,4 +4,8 @@
     <string name="trailers_section_title">Trailers</string>
     <string name="review_author_prefix">Review by</string>
     <string name="reviews_section_title">Reviews</string>
+    <string name="added_to_favorites">Movie added to your favorites</string>
+    <string name="action_sortOrder">Most Popular</string>
+    <string name="sort_by_HighestRated">Highest Rated</string>
+    <string name="sort_by_MostPopular">Most Popular</string>
 </resources>

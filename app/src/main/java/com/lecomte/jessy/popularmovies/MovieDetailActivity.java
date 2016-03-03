@@ -62,9 +62,9 @@ public class MovieDetailActivity extends AppCompatActivity
                     else {
                         // Set icon to filled star
                         fab.setImageResource(R.drawable.ic_star_white_48dp);
-                        
-                        Snackbar.make(view, "Movie added to your favorites", Snackbar.LENGTH_LONG)
-                                .setAction("Action", null).show();
+
+                        Snackbar.make(view, getString(R.string.added_to_favorites),
+                                Snackbar.LENGTH_LONG).setAction("Action", null).show();
                     }
                     // Toggle favorite state
                     mFavoriteMovie = !mFavoriteMovie;

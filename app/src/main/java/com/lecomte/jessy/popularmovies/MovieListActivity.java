@@ -2,14 +2,14 @@ package com.lecomte.jessy.popularmovies;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.annotation.IntDef;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.lecomte.jessy.mynetworklib.NetworkUtils;
 import com.lecomte.jessy.mythemoviedblib.MovieDataUrlBuilder;
@@ -17,6 +17,9 @@ import com.lecomte.jessy.mythemoviedblib.TheMovieDbJsonParser;
 import com.lecomte.jessy.mythemoviedblib.data.Movies;
 
 import org.json.JSONException;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
  * An activity representing a list of Movies. This activity
@@ -40,6 +43,7 @@ public class MovieListActivity extends AppCompatActivity {
      */
     private boolean mTwoPane;
     private RecyclerView mRecyclerView;
+    private int mSortBy = MovieDataUrlBuilder.SORT_BY_MOST_POPULAR;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +75,8 @@ public class MovieListActivity extends AppCompatActivity {
             mTwoPane = true;
         }
 
-        new downloadMovieDataTask().execute(MovieDataUrlBuilder.buildDiscoverUrl(TMDB_API_KEY));
+        new downloadMovieDataTask()
+                .execute(MovieDataUrlBuilder.buildDiscoverUrl(TMDB_API_KEY, mSortBy));
     }
 
     // Uses AsyncTask to create a task away from the main UI thread. This task takes a
@@ -118,5 +123,51 @@ public class MovieListActivity extends AppCompatActivity {
     private void setupRecyclerView() {
         mRecyclerView.setLayoutManager(new GridLayoutManager(this,
                 getResources().getInteger(R.integer.recyclerview_columns)));
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+
+        getMenuInflater().inflate(R.menu.main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        if (id == R.id.action_sortOrder) {
+            boolean bSortCriteriaValid = true;
+            Log.d(TAG, "onOptionsItemSelected: toggle sortOrder");
+
+            // Select next sorting criteria
+            mSortBy = (mSortBy + 1) >= MovieDataUrlBuilder.SORT_CRITERIA_COUNT? 0: mSortBy + 1;
+            Log.d(TAG, "onOptionsItemSelected: mSortBy = " + mSortBy);
+
+            // Update UI with next sorting criteria
+            if (mSortBy == MovieDataUrlBuilder.SORT_BY_HIGHEST_RATED) {
+                item.setTitle(R.string.sort_by_HighestRated);
+            }
+
+            else if (mSortBy == MovieDataUrlBuilder.SORT_BY_MOST_POPULAR) {
+                item.setTitle(R.string.sort_by_MostPopular);
+            }
+            
+            else {
+                Log.d(TAG, "onOptionsItemSelected: mSortBy value is invalid");
+                bSortCriteriaValid = false;
+            }
+
+            // Download movies based on sort criteria and update UI
+            if (bSortCriteriaValid) {
+                new downloadMovieDataTask()
+                        .execute(MovieDataUrlBuilder.buildDiscoverUrl(TMDB_API_KEY, mSortBy));
+            }
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }
