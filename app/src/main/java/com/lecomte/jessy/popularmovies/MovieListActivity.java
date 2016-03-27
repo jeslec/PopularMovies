@@ -62,6 +62,7 @@ public class MovieListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate()");
         setContentView(R.layout.activity_movie_list);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -87,21 +88,24 @@ public class MovieListActivity extends AppCompatActivity {
         // If onCreate() is being called as a result of a config change (e.g. device rotation),
         // load the movie info that was present before the config change
         if (savedInstanceState != null) {
+            Log.d(TAG, "onCreate() - Was called because of a config change");
             movieInfoParcelArray = savedInstanceState.getParcelableArray(
                     getString(R.string.instance_state_key_movies_data));
 
-            MovieInfo[] movieDataArray = new MovieInfo[movieInfoParcelArray.length];
-            for (int i=0; i<movieInfoParcelArray.length; i++) {
-                movieDataArray[i] = (MovieInfo)movieInfoParcelArray[i];
-            }
+            if (movieInfoParcelArray != null) {
+                MovieInfo[] movieDataArray = new MovieInfo[movieInfoParcelArray.length];
+                for (int i=0; i<movieInfoParcelArray.length; i++) {
+                    movieDataArray[i] = (MovieInfo)movieInfoParcelArray[i];
+                }
 
-            Movies movies = new Movies();
-            movies.setResults(movieDataArray);
-            updateUI(movies);
+                Movies movies = new Movies();
+                movies.setResults(movieDataArray);
+                updateUI(movies);
+            }
         }
 
         // No movies info was loaded before the config change, so download from server
-        if (movieInfoParcelArray.length == 0) {
+        if (movieInfoParcelArray == null || movieInfoParcelArray.length == 0) {
             downloadMovieData();
         }
     }
