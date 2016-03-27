@@ -16,7 +16,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.lecomte.jessy.mynetworklib.NetworkUtils;
 import com.lecomte.jessy.mythemoviedblib.MovieDataUrlBuilder;
@@ -49,9 +48,9 @@ public class MovieListActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private int mSortBy = MovieDataUrlBuilder.SORT_BY_MOST_POPULAR;
     private TextView mEmptyView;
-    //private NetworkChangeReceiver networkChangeReceiver;
+    //private NetworkChangeReceiver mNetworkChangeReceiver;
     private boolean mNetworkConnectionMonitored = false;
-    private MyNetworkChangeReceiver networkChangeReceiver;
+    private MyNetworkChangeReceiver mNetworkChangeReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,12 +101,12 @@ public class MovieListActivity extends AppCompatActivity {
                 }
             }
 
-            // Monitor the network connection
+            // Network is disabled, monitor it so we know when it is back online
             else if (!mNetworkConnectionMonitored){
                 // TODO: unregister this!
                 IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-                networkChangeReceiver = new MyNetworkChangeReceiver();
-                registerReceiver(networkChangeReceiver, filter);
+                mNetworkChangeReceiver = new MyNetworkChangeReceiver();
+                registerReceiver(mNetworkChangeReceiver, filter);
                 mNetworkConnectionMonitored = true;
             }
 
@@ -192,11 +191,17 @@ public class MovieListActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             boolean bNetworkConnected = NetworkUtils.isInternetAvailable(context);
-            Toast.makeText(context, "Network connected: " + bNetworkConnected, Toast.LENGTH_LONG).show();
 
             if (bNetworkConnected) {
+                // Stop monitoring the network connection
+                if (mNetworkConnectionMonitored) {
+                    unregisterReceiver(mNetworkChangeReceiver);
+                    mNetworkConnectionMonitored = false;
+                }
+
                 new downloadMovieDataTask()
                         .execute(MovieDataUrlBuilder.buildDiscoverUrl(TMDB_API_KEY, mSortBy));
+
             }
         }
     }
