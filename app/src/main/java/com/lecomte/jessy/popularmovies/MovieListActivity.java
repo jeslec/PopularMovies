@@ -7,7 +7,6 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -52,6 +51,7 @@ public class MovieListActivity extends AppCompatActivity {
     //private NetworkChangeReceiver mNetworkChangeReceiver;
     private boolean mNetworkConnectionMonitored = false;
     private MyNetworkChangeReceiver mNetworkChangeReceiver;
+    private AsyncTask<String, Void, Movies> mDownloadMovieDataTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +76,11 @@ public class MovieListActivity extends AppCompatActivity {
             mTwoPane = true;
         }
 
-        new downloadMovieDataTask()
+        downloadMovieData();
+    }
+
+    private void downloadMovieData() {
+        mDownloadMovieDataTask = new DownloadMovieDataTask()
                 .execute(MovieDataUrlBuilder.buildDiscoverUrl(TMDB_API_KEY, mSortBy));
     }
 
@@ -85,8 +89,8 @@ public class MovieListActivity extends AppCompatActivity {
     // has been established, the AsyncTask downloads the contents of the webpage as
     // an InputStream. Finally, the InputStream is converted into a string, which is
     // displayed in the UI by the AsyncTask's onPostExecute method.
-    private class downloadMovieDataTask extends AsyncTask<String, Void, Movies> {
-        private final String TAG = downloadMovieDataTask.class.getSimpleName();
+    private class DownloadMovieDataTask extends AsyncTask<String, Void, Movies> {
+        private final String TAG = DownloadMovieDataTask.class.getSimpleName();
 
         @Override
         protected Movies doInBackground(String... urls) {
@@ -179,7 +183,7 @@ public class MovieListActivity extends AppCompatActivity {
 
             // Download movies based on sort criteria and update UI
             if (bSortCriteriaValid) {
-                new downloadMovieDataTask()
+                new DownloadMovieDataTask()
                         .execute(MovieDataUrlBuilder.buildDiscoverUrl(TMDB_API_KEY, mSortBy));
             }
         }
@@ -194,10 +198,7 @@ public class MovieListActivity extends AppCompatActivity {
 
             if (bNetworkConnected) {
                 stopMonitoringNetworkStatus();
-
-                new downloadMovieDataTask()
-                        .execute(MovieDataUrlBuilder.buildDiscoverUrl(TMDB_API_KEY, mSortBy));
-
+                downloadMovieData();
             }
         }
     }
@@ -205,6 +206,13 @@ public class MovieListActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         stopMonitoringNetworkStatus();
+
+        // Cancel task if not completed
+        if (mDownloadMovieDataTask != null) {
+            boolean bCanceled = mDownloadMovieDataTask.cancel(true);
+            mDownloadMovieDataTask = null;
+        }
+
         super.onDestroy();
     }
 
