@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,9 +21,13 @@ import android.widget.TextView;
 import com.lecomte.jessy.mynetworklib.NetworkUtils;
 import com.lecomte.jessy.mythemoviedblib.MovieDataUrlBuilder;
 import com.lecomte.jessy.mythemoviedblib.TheMovieDbJsonParser;
+import com.lecomte.jessy.mythemoviedblib.data.MovieInfo;
 import com.lecomte.jessy.mythemoviedblib.data.Movies;
 
 import org.json.JSONException;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * An activity representing a list of Movies. This activity
@@ -52,6 +57,7 @@ public class MovieListActivity extends AppCompatActivity {
     private boolean mNetworkConnectionMonitored = false;
     private MyNetworkChangeReceiver mNetworkChangeReceiver;
     private AsyncTask<String, Void, Movies> mDownloadMovieDataTask;
+    private ArrayList<MovieInfo> mMoviesData = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +82,28 @@ public class MovieListActivity extends AppCompatActivity {
             mTwoPane = true;
         }
 
-        downloadMovieData();
+        Parcelable[] movieInfoParcelArray = new Parcelable[]{};
+
+        // If onCreate() is being called as a result of a config change (e.g. device rotation),
+        // load the movie info that was present before the config change
+        if (savedInstanceState != null) {
+            movieInfoParcelArray = savedInstanceState.getParcelableArray(
+                    getString(R.string.instance_state_key_movies_data));
+
+            MovieInfo[] movieDataArray = new MovieInfo[movieInfoParcelArray.length];
+            for (int i=0; i<movieInfoParcelArray.length; i++) {
+                movieDataArray[i] = (MovieInfo)movieInfoParcelArray[i];
+            }
+
+            Movies movies = new Movies();
+            movies.setResults(movieDataArray);
+            updateUI(movies);
+        }
+
+        // No movies info was loaded before the config change, so download from server
+        if (movieInfoParcelArray.length == 0) {
+            downloadMovieData();
+        }
     }
 
     private void downloadMovieData() {
@@ -96,6 +123,7 @@ public class MovieListActivity extends AppCompatActivity {
         protected Movies doInBackground(String... urls) {
             // params comes from the execute() call: params[0] is the url.
             if (NetworkUtils.isInternetAvailable(MovieListActivity.this)) {
+                Log.d(TAG, "doInBackground: Downloading movie data...");
                 String jsonString = NetworkUtils.downloadData(urls[0]);
 
                 try {
@@ -132,6 +160,9 @@ public class MovieListActivity extends AppCompatActivity {
         }
 
         else {
+            // TEST
+            mMoviesData = new ArrayList<MovieInfo>(Arrays.asList(movies.getResults()));
+
             // Show movie list and hide empty view
             mRecyclerView.setVisibility(View.VISIBLE);
             mEmptyView.setVisibility(View.GONE);
@@ -205,15 +236,28 @@ public class MovieListActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        Log.d(TAG, "onDestroy()");
         stopMonitoringNetworkStatus();
 
         // Cancel task if not completed
         if (mDownloadMovieDataTask != null) {
             boolean bCanceled = mDownloadMovieDataTask.cancel(true);
-            mDownloadMovieDataTask = null;
         }
 
         super.onDestroy();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        // Save currently displayed movie info
+        if (mMoviesData != null) {
+            MovieInfo[] movieArray = mMoviesData.toArray(new MovieInfo[mMoviesData.size()]);
+            outState.putParcelableArray(
+                    getString(R.string.instance_state_key_movies_data),
+                    movieArray);
+        }
     }
 
     private void stopMonitoringNetworkStatus() {

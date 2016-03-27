@@ -8,4 +8,5 @@
     <string name="sort_by_highest_rated">Sort By Highest Rated</string>
     <string name="sort_by_most_popular">Sort By Most Popular</string>
     <string name="no_data_available">No data available. Please check your Internet connection.</string>
+    <string name="instance_state_key_movies_data">key_movies_data</string>
 </resources>
