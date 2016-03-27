@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -103,7 +104,6 @@ public class MovieListActivity extends AppCompatActivity {
 
             // Network is disabled, monitor it so we know when it is back online
             else if (!mNetworkConnectionMonitored){
-                // TODO: unregister this!
                 IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
                 mNetworkChangeReceiver = new MyNetworkChangeReceiver();
                 registerReceiver(mNetworkChangeReceiver, filter);
@@ -193,16 +193,25 @@ public class MovieListActivity extends AppCompatActivity {
             boolean bNetworkConnected = NetworkUtils.isInternetAvailable(context);
 
             if (bNetworkConnected) {
-                // Stop monitoring the network connection
-                if (mNetworkConnectionMonitored) {
-                    unregisterReceiver(mNetworkChangeReceiver);
-                    mNetworkConnectionMonitored = false;
-                }
+                stopMonitoringNetworkStatus();
 
                 new downloadMovieDataTask()
                         .execute(MovieDataUrlBuilder.buildDiscoverUrl(TMDB_API_KEY, mSortBy));
 
             }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        stopMonitoringNetworkStatus();
+        super.onDestroy();
+    }
+
+    private void stopMonitoringNetworkStatus() {
+        if (mNetworkConnectionMonitored) {
+            unregisterReceiver(mNetworkChangeReceiver);
+            mNetworkConnectionMonitored = false;
         }
     }
 }
