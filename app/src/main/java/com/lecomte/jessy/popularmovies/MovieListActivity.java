@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.lecomte.jessy.mynetworklib.NetworkUtils;
@@ -58,11 +59,11 @@ public class MovieListActivity extends AppCompatActivity {
     private MyNetworkChangeReceiver mNetworkChangeReceiver;
     private AsyncTask<String, Void, Movies> mDownloadMovieDataTask;
     private ArrayList<MovieInfo> mMoviesData = null;
+    private ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate()");
         setContentView(R.layout.activity_movie_list);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -72,6 +73,8 @@ public class MovieListActivity extends AppCompatActivity {
         mRecyclerView = (RecyclerView)findViewById(R.id.movie_list);
         assert mRecyclerView != null;
         setupRecyclerView();
+
+        mProgressBar = (ProgressBar) findViewById(R.id.movie_list_progress_bar);
 
         mEmptyView = (TextView)findViewById(R.id.empty_view);
 
@@ -88,7 +91,6 @@ public class MovieListActivity extends AppCompatActivity {
         // If onCreate() is being called as a result of a config change (e.g. device rotation),
         // load the movie info that was present before the config change
         if (savedInstanceState != null) {
-            Log.d(TAG, "onCreate() - Was called because of a config change");
             movieInfoParcelArray = savedInstanceState.getParcelableArray(
                     getString(R.string.instance_state_key_movies_data));
 
@@ -124,10 +126,16 @@ public class MovieListActivity extends AppCompatActivity {
         private final String TAG = DownloadMovieDataTask.class.getSimpleName();
 
         @Override
+        protected void onPreExecute() {
+            mProgressBar.setVisibility(View.VISIBLE);
+            super.onPreExecute();
+        }
+
+        @Override
         protected Movies doInBackground(String... urls) {
+
             // params comes from the execute() call: params[0] is the url.
             if (NetworkUtils.isInternetAvailable(MovieListActivity.this)) {
-                Log.d(TAG, "doInBackground: Downloading movie data...");
                 String jsonString = NetworkUtils.downloadData(urls[0]);
 
                 try {
@@ -153,6 +161,7 @@ public class MovieListActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Movies moviesData) {
             updateUI(moviesData);
+            mProgressBar.setVisibility(View.GONE);
         }
     }
 
@@ -164,7 +173,6 @@ public class MovieListActivity extends AppCompatActivity {
         }
 
         else {
-            // TEST
             mMoviesData = new ArrayList<MovieInfo>(Arrays.asList(movies.getResults()));
 
             // Show movie list and hide empty view
@@ -196,7 +204,6 @@ public class MovieListActivity extends AppCompatActivity {
 
         if (id == R.id.menu_item_sort_order) {
             boolean bSortCriteriaValid = true;
-            Log.d(TAG, "onOptionsItemSelected: toggle sortOrder");
 
             // Select next sorting criteria
             mSortBy = (mSortBy + 1) >= MovieDataUrlBuilder.SORT_CRITERIA_COUNT? 0: mSortBy + 1;
@@ -240,7 +247,6 @@ public class MovieListActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        Log.d(TAG, "onDestroy()");
         stopMonitoringNetworkStatus();
 
         // Cancel task if not completed
