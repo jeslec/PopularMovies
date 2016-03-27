@@ -1,13 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.RecyclerView android:id="@+id/movie_list"
-                                        android:name="com.lecomte.jessy.popularmovies.MovieListFragment"
-                                        xmlns:android="http://schemas.android.com/apk/res/android"
-                                        xmlns:app="http://schemas.android.com/apk/res-auto"
-                                        xmlns:tools="http://schemas.android.com/tools"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:layout_marginLeft="@dimen/recyclerview_marginLeft"
-                                        android:layout_marginRight="@dimen/recyclerview_marginRight"
-                                        app:layoutManager="LinearLayoutManager"
-                                        tools:context="com.lecomte.jessy.popularmovies.MovieListActivity"
-                                        tools:listitem="@layout/movie_list_content"/>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             xmlns:tools="http://schemas.android.com/tools">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/movie_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/recyclerview_marginLeft"
+        android:layout_marginRight="@dimen/recyclerview_marginRight"
+        app:layoutManager="LinearLayoutManager"
+        tools:context="com.lecomte.jessy.popularmovies.MovieListActivity"
+        tools:listitem="@layout/movie_list_content">
+    </android.support.v7.widget.RecyclerView>
+
+    <TextView
+        android:id="@+id/empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/empty_view_margin_left"
+        android:layout_marginRight="@dimen/empty_view_right_left"
+        android:gravity="center"
+        android:visibility="gone"
+        android:text="@string/no_data_available" />
+
+</FrameLayout>

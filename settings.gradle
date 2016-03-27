@@ -1,1 +1,1 @@
-include ':app', ':mynetworklib', ':mythemoviedblib'
+include ':app', ':my-network-lib', ':my-tmdb-lib'

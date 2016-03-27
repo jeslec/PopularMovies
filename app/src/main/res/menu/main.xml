@@ -1,10 +1,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto" >
 
-    <!-- Reload news items, show as action button -->
     <item
-        android:id="@+id/action_sortOrder"
-        android:title="@string/action_sortOrder"
+        android:id="@+id/menu_item_sort_order"
+        android:title="@string/sort_by_most_popular"
         android:icon="@android:drawable/ic_menu_sort_alphabetically"
         app:showAsAction="never"/>
 

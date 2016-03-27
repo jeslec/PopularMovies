@@ -1,4 +1,4 @@
-package com.lecomte.jessy.popularmovies.RecyclerView;
+package com.lecomte.jessy.popularmovies;
 
 /**
  * Created by Jessy on 2016-01-27.
@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.lecomte.jessy.mythemoviedblib.data.MovieInfo;
 import com.lecomte.jessy.popularmovies.R;
 
-public class RV_ViewHolderViewType0 extends RecyclerView.ViewHolder {
+public class MovieListViewHolderType0 extends RecyclerView.ViewHolder {
     public TextView trailersSectionTextView;
     public View mView;
     public TextView releaseDateTextView;
@@ -21,7 +21,7 @@ public class RV_ViewHolderViewType0 extends RecyclerView.ViewHolder {
     public TextView summaryTextView;
     public MovieInfo item;
 
-    public RV_ViewHolderViewType0(View view) {
+    public MovieListViewHolderType0(View view) {
         super(view);
         mView = view;
         posterTextView = (ImageView) view.findViewById(R.id.detail_poster_ImageView);

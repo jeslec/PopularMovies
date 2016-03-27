@@ -1,4 +1,17 @@
+buildscript {
+    repositories {
+        maven { url 'https://maven.fabric.io/public' }
+    }
+
+    dependencies {
+
+    }
+}
 apply plugin: 'com.android.application'
+
+repositories {
+
+}
 
 android {
     compileSdkVersion 23
@@ -27,6 +40,6 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
     compile 'com.squareup.picasso:picasso:2.5.2'
-    compile project(':mynetworklib')
-    compile project(':mythemoviedblib')
+    compile project(':my-network-lib')
+    compile project(':my-tmdb-lib')
 }

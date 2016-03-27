@@ -20,8 +20,8 @@ import java.util.Arrays;
 /**
  * Created by Jessy on 2016-01-27.
  */
-public class MovieListRecyclerViewAdapter
-        extends RecyclerView.Adapter<MovieListRecyclerViewAdapter.MovieListViewHolder> {
+public class MovieListAdapter
+        extends RecyclerView.Adapter<MovieListAdapter.MovieListViewHolder> {
 
     private final FragmentActivity mFragmentActivity;
     private final boolean mTwoPane;
@@ -29,18 +29,15 @@ public class MovieListRecyclerViewAdapter
     // Data to be displayed in the RecyclerView
     private ArrayList<MovieInfo> mData;
 
-    public MovieListRecyclerViewAdapter(FragmentActivity activity, boolean twoPane,
-                                        MovieInfo[] resultsArray) {
-        mData = new ArrayList<MovieInfo>(Arrays.asList(resultsArray));
+    public MovieListAdapter(FragmentActivity activity, boolean twoPane,
+                            MovieInfo[] resultsArray) {
+        if (resultsArray != null) {
+            mData = new ArrayList<MovieInfo>(Arrays.asList(resultsArray));
+        }
+
         mFragmentActivity = activity;
         mTwoPane = twoPane;
     }
-
-    /*public void swap(ArrayList<Data> datas){
-        data.clear();
-        data.addAll(datas);
-        notifyDataSetChanged();
-    }*/
 
     @Override
     public MovieListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -52,8 +49,12 @@ public class MovieListRecyclerViewAdapter
     @Override
     public void onBindViewHolder(final MovieListViewHolder holder, int position) {
         holder.mItem = mData.get(position);
+
+        if (holder.mItem == null) {
+            return;
+        }
+
         String posterUrl = MovieDataUrlBuilder.buildPosterUrl(holder.mItem.getPoster_path());
-        //Log.d(TAG, String.format("[%d]: %s", position, posterUrl));
 
         // Neat trick: we are getting the context from the view itself
         Picasso.with(holder.posterImageView.getContext())
@@ -74,7 +75,6 @@ public class MovieListRecyclerViewAdapter
                     Context context = v.getContext();
                     Intent intent = new Intent(context, MovieDetailActivity.class);
                     intent.putExtra(MovieDetailActivity.EXTRA_ITEM, holder.mItem);
-
                     context.startActivity(intent);
                 }
             }
@@ -83,6 +83,10 @@ public class MovieListRecyclerViewAdapter
 
     @Override
     public int getItemCount() {
+        if (mData == null) {
+            return 0;
+        }
+
         return mData.size();
     }
 
@@ -95,11 +99,6 @@ public class MovieListRecyclerViewAdapter
             super(view);
             mView = view;
             posterImageView = (ImageView)view.findViewById(R.id.movie_list_poster_ImageView);
-        }
-
-        @Override
-        public String toString() {
-            return super.toString();// + " '";// + mContentView.getText() + "'";
         }
     }
 }

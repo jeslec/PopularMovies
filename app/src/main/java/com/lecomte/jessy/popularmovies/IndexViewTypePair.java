@@ -1,4 +1,4 @@
-package com.lecomte.jessy.popularmovies.RecyclerView;
+package com.lecomte.jessy.popularmovies;
 
 /**
  * Created by Jessy on 2016-02-01.

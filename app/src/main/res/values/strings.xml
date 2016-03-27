@@ -5,7 +5,7 @@
     <string name="review_author_prefix">Review by</string>
     <string name="reviews_section_title">Reviews</string>
     <string name="added_to_favorites">Movie added to your favorites</string>
-    <string name="action_sortOrder">Most Popular</string>
-    <string name="sort_by_HighestRated">Highest Rated</string>
-    <string name="sort_by_MostPopular">Most Popular</string>
+    <string name="sort_by_highest_rated">Sort By Highest Rated</string>
+    <string name="sort_by_most_popular">Sort By Most Popular</string>
+    <string name="no_data_available">No data available. Please check your Internet connection.</string>
 </resources>

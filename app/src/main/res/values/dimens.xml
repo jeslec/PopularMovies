@@ -6,4 +6,6 @@
     <dimen name="text_margin">16dp</dimen>
     <dimen name="recyclerview_marginLeft">0dp</dimen>
     <dimen name="recyclerview_marginRight">0dp</dimen>
+    <dimen name="empty_view_margin_left">16dp</dimen>
+    <dimen name="empty_view_right_left">16dp</dimen>
 </resources>

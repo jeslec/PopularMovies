@@ -2,11 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/PopularMovies.iml" filepath="$PROJECT_DIR$/PopularMovies.iml" />
+      <module fileurl="file://$PROJECT_DIR$/PopularMovies_Stage1.iml" filepath="$PROJECT_DIR$/PopularMovies_Stage1.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/mynetworklib/mynetworklib.iml" filepath="$PROJECT_DIR$/mynetworklib/mynetworklib.iml" />
-      <module fileurl="file://$PROJECT_DIR$/mynetworklib/mynetworklib.iml" filepath="$PROJECT_DIR$/mynetworklib/mynetworklib.iml" />
-      <module fileurl="file://$PROJECT_DIR$/mythemoviedblib/mythemoviedblib.iml" filepath="$PROJECT_DIR$/mythemoviedblib/mythemoviedblib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/my-network-lib/my-network-lib.iml" filepath="$PROJECT_DIR$/my-network-lib/my-network-lib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/my-tmdb-lib/my-tmdb-lib.iml" filepath="$PROJECT_DIR$/my-tmdb-lib/my-tmdb-lib.iml" />
     </modules>
   </component>
 </project>

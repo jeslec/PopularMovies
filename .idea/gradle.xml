@@ -11,8 +11,8 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/mynetworklib" />
-            <option value="$PROJECT_DIR$/mythemoviedblib" />
+            <option value="$PROJECT_DIR$/my-network-lib" />
+            <option value="$PROJECT_DIR$/my-tmdb-lib" />
           </set>
         </option>
       </GradleProjectSettings>

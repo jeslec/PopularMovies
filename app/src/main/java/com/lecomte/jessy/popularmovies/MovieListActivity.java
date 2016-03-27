@@ -1,8 +1,12 @@
 package com.lecomte.jessy.popularmovies;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.IntDef;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +14,9 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.lecomte.jessy.mynetworklib.NetworkUtils;
 import com.lecomte.jessy.mythemoviedblib.MovieDataUrlBuilder;
@@ -18,14 +25,11 @@ import com.lecomte.jessy.mythemoviedblib.data.Movies;
 
 import org.json.JSONException;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-
 /**
  * An activity representing a list of Movies. This activity
  * has different presentations for handset and tablet-size devices. On
  * handsets, the activity presents a list of items, which when touched,
- * lead to a {@link MovieDetailActivity_old} representing
+ * lead to a {@link MovieDetailActivity} representing
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
@@ -44,6 +48,10 @@ public class MovieListActivity extends AppCompatActivity {
     private boolean mTwoPane;
     private RecyclerView mRecyclerView;
     private int mSortBy = MovieDataUrlBuilder.SORT_BY_MOST_POPULAR;
+    private TextView mEmptyView;
+    //private NetworkChangeReceiver networkChangeReceiver;
+    private boolean mNetworkConnectionMonitored = false;
+    private MyNetworkChangeReceiver networkChangeReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,18 +62,11 @@ public class MovieListActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar.setTitle(getTitle());
 
-        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-*/
         mRecyclerView = (RecyclerView)findViewById(R.id.movie_list);
         assert mRecyclerView != null;
         setupRecyclerView();
+
+        mEmptyView = (TextView)findViewById(R.id.empty_view);
 
         if (findViewById(R.id.movie_detail_container) != null) {
             // The detail container view will be present only in the
@@ -90,13 +91,24 @@ public class MovieListActivity extends AppCompatActivity {
         @Override
         protected Movies doInBackground(String... urls) {
             // params comes from the execute() call: params[0] is the url.
-            String jsonString = NetworkUtils.downloadData(urls[0]);
+            if (NetworkUtils.isInternetAvailable(MovieListActivity.this)) {
+                String jsonString = NetworkUtils.downloadData(urls[0]);
 
-            try {
-                // Parse the JSON string into our model layer
-                return TheMovieDbJsonParser.parseMovieData(jsonString);
-            } catch (JSONException e) {
-                Log.e(TAG, e.getMessage());
+                try {
+                    // Parse the JSON string into our model layer
+                    return TheMovieDbJsonParser.parseMovieData(jsonString);
+                } catch (JSONException e) {
+                    Log.e(TAG, e.getMessage());
+                }
+            }
+
+            // Monitor the network connection
+            else if (!mNetworkConnectionMonitored){
+                // TODO: unregister this!
+                IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+                networkChangeReceiver = new MyNetworkChangeReceiver();
+                registerReceiver(networkChangeReceiver, filter);
+                mNetworkConnectionMonitored = true;
             }
 
             return null;
@@ -111,13 +123,19 @@ public class MovieListActivity extends AppCompatActivity {
 
     private void updateUI(Movies movies) {
         if (movies == null) {
-            Log.d(TAG, "Movies data is null!");
-            return;
+            // Show empty view
+            mRecyclerView.setVisibility(View.GONE);
+            mEmptyView.setVisibility(View.VISIBLE);
         }
 
-        Log.d(TAG, movies.toString());
-        mRecyclerView.setAdapter(
-                new MovieListRecyclerViewAdapter(this, mTwoPane, movies.getResults()));
+        else {
+            // Show movie list and hide empty view
+            mRecyclerView.setVisibility(View.VISIBLE);
+            mEmptyView.setVisibility(View.GONE);
+
+            mRecyclerView.setAdapter(
+                    new MovieListAdapter(this, mTwoPane, movies.getResults()));
+        }
     }
 
     private void setupRecyclerView() {
@@ -127,7 +145,6 @@ public class MovieListActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
-
         getMenuInflater().inflate(R.menu.main, menu);
         return super.onCreateOptionsMenu(menu);
     }
@@ -139,7 +156,7 @@ public class MovieListActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if (id == R.id.action_sortOrder) {
+        if (id == R.id.menu_item_sort_order) {
             boolean bSortCriteriaValid = true;
             Log.d(TAG, "onOptionsItemSelected: toggle sortOrder");
 
@@ -149,11 +166,11 @@ public class MovieListActivity extends AppCompatActivity {
 
             // Update UI with next sorting criteria
             if (mSortBy == MovieDataUrlBuilder.SORT_BY_HIGHEST_RATED) {
-                item.setTitle(R.string.sort_by_HighestRated);
+                item.setTitle(R.string.sort_by_highest_rated);
             }
 
             else if (mSortBy == MovieDataUrlBuilder.SORT_BY_MOST_POPULAR) {
-                item.setTitle(R.string.sort_by_MostPopular);
+                item.setTitle(R.string.sort_by_most_popular);
             }
             
             else {
@@ -169,5 +186,18 @@ public class MovieListActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public class MyNetworkChangeReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            boolean bNetworkConnected = NetworkUtils.isInternetAvailable(context);
+            Toast.makeText(context, "Network connected: " + bNetworkConnected, Toast.LENGTH_LONG).show();
+
+            if (bNetworkConnected) {
+                new downloadMovieDataTask()
+                        .execute(MovieDataUrlBuilder.buildDiscoverUrl(TMDB_API_KEY, mSortBy));
+            }
+        }
     }
 }
