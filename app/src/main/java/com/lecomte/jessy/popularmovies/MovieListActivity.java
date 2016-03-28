@@ -96,6 +96,8 @@ public class MovieListActivity extends AppCompatActivity {
                     getString(R.string.instance_state_key_movies_data));
 
             if (movieInfoParcelArray != null) {
+                Log.d(TAG, "onCreate() - Restoring instance state for movieInfoParcelArray, length: " + movieInfoParcelArray.length);
+
                 MovieInfo[] movieDataArray = new MovieInfo[movieInfoParcelArray.length];
                 for (int i=0; i<movieInfoParcelArray.length; i++) {
                     movieDataArray[i] = (MovieInfo)movieInfoParcelArray[i];
@@ -104,6 +106,8 @@ public class MovieListActivity extends AppCompatActivity {
                 // Get sort criteria
                 mSortByPopularity = savedInstanceState.getBoolean(
                         getString(R.string.instance_state_key_sort_by_popularity));
+
+                Log.d(TAG, "onCreate() - Restoring instance state for mSortByPopularity, value: " + mSortByPopularity);
 
                 Movies movies = new Movies();
                 movies.setResults(movieDataArray);
@@ -205,10 +209,10 @@ public class MovieListActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.main, menu);
-
-        // TEST
+        
         MenuItem sortCriteriaItem = menu.findItem(R.id.menu_item_sort_order);
 
+        // Set menu option text based on sort criteria value
         if (sortCriteriaItem != null) {
             if (mSortByPopularity) {
                 sortCriteriaItem.setTitle(R.string.sort_by_highest_rated);
@@ -232,6 +236,9 @@ public class MovieListActivity extends AppCompatActivity {
 
         if (id == R.id.menu_item_sort_order) {
 
+            // When user changes sort criteria, the last displayed values become invalid
+            mMoviesData = null;
+
             // Toggle sort criteria in menu
             mSortByPopularity = !mSortByPopularity;
 
@@ -246,11 +253,6 @@ public class MovieListActivity extends AppCompatActivity {
             }
 
             Log.d(TAG, "onOptionsItemSelected: mSortCriteriaInUrl = " + mSortCriteriaInUrl);
-
-           /* new DownloadMovieDataTask()
-                    .execute(MovieDataUrlBuilder.buildDiscoverUrl(TMDB_API_KEY,
-                            getSortCriteria(mSortByPopularity)));*/
-
             downloadMovieData();
         }
 
@@ -291,11 +293,12 @@ public class MovieListActivity extends AppCompatActivity {
             outState.putParcelableArray(
                     getString(R.string.instance_state_key_movies_data),
                     movieArray);
+            Log.d(TAG, "onSaveInstanceState() - Saved movieArray, length: " + movieArray.length);
 
             // We only save the sort criteria if there are movies loaded in list
             outState.putBoolean(
                     getString(R.string.instance_state_key_sort_by_popularity), mSortByPopularity);
-            Log.d(TAG, "onSaveInstanceState: sortCriteria is: " + mSortCriteriaInUrl);
+            Log.d(TAG, "onSaveInstanceStateJ() - Saved mSortByPopularity, value: " + mSortByPopularity);
         }
     }
 
