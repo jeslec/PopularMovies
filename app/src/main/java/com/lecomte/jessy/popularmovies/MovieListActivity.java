@@ -130,6 +130,10 @@ public class MovieListActivity extends AppCompatActivity {
     }
 
     private void downloadMovieData() {
+        // If task has not completed before another task is launch, we cancel the old task
+        // This can happen when user clicks on sort criteria in menu twice in a row
+        cancelDownloadMovieDataTask();
+        
         mDownloadMovieDataTask = new DownloadMovieDataTask()
                 .execute(MovieDataUrlBuilder.buildDiscoverUrl(TMDB_API_KEY, getSortCriteria()));
     }
@@ -274,13 +278,16 @@ public class MovieListActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         stopMonitoringNetworkStatus();
+        cancelDownloadMovieDataTask();
+        super.onDestroy();
+    }
 
-        // Cancel task if not completed
+    private void cancelDownloadMovieDataTask() {
         if (mDownloadMovieDataTask != null) {
             boolean bCanceled = mDownloadMovieDataTask.cancel(true);
+            Log.d(TAG, "cancelDownloadMovieDataTask() - Task canceled: " + bCanceled);
+            mDownloadMovieDataTask = null;
         }
-
-        super.onDestroy();
     }
 
     @Override
