@@ -52,9 +52,10 @@ public class MovieListActivity extends AppCompatActivity {
      */
     private boolean mTwoPane;
     private RecyclerView mRecyclerView;
-    private int mSortBy = MovieDataUrlBuilder.SORT_BY_MOST_POPULAR;
+    private int mSortCriteriaInUrl = MovieDataUrlBuilder.SORT_BY_MOST_POPULAR;
+    private boolean mSortByPopularity = true;
+    //private int mDisplayedSortCriteria = MovieDataUrlBuilder.SORT_BY_HIGHEST_RATED;
     private TextView mEmptyView;
-    //private NetworkChangeReceiver mNetworkChangeReceiver;
     private boolean mNetworkConnectionMonitored = false;
     private MyNetworkChangeReceiver mNetworkChangeReceiver;
     private AsyncTask<String, Void, Movies> mDownloadMovieDataTask;
@@ -100,11 +101,17 @@ public class MovieListActivity extends AppCompatActivity {
                     movieDataArray[i] = (MovieInfo)movieInfoParcelArray[i];
                 }
 
+                // Get sort criteria
+                mSortByPopularity = savedInstanceState.getBoolean(
+                        getString(R.string.instance_state_key_sort_by_popularity));
+
                 Movies movies = new Movies();
                 movies.setResults(movieDataArray);
                 updateUI(movies);
             }
         }
+
+        Log.d(TAG, "onCreate() - mSortByPopularity: " + mSortByPopularity);
 
         // No movies info was loaded before the config change, so download from server
         if (movieInfoParcelArray == null || movieInfoParcelArray.length == 0) {
@@ -112,9 +119,15 @@ public class MovieListActivity extends AppCompatActivity {
         }
     }
 
+    private @MovieDataUrlBuilder.SortCriteria
+    int getSortCriteria() {
+        return mSortByPopularity? MovieDataUrlBuilder.SORT_BY_MOST_POPULAR
+                : MovieDataUrlBuilder.SORT_BY_HIGHEST_RATED;
+    }
+
     private void downloadMovieData() {
         mDownloadMovieDataTask = new DownloadMovieDataTask()
-                .execute(MovieDataUrlBuilder.buildDiscoverUrl(TMDB_API_KEY, mSortBy));
+                .execute(MovieDataUrlBuilder.buildDiscoverUrl(TMDB_API_KEY, getSortCriteria()));
     }
 
     // Uses AsyncTask to create a task away from the main UI thread. This task takes a
@@ -192,6 +205,21 @@ public class MovieListActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.main, menu);
+
+        // TEST
+        MenuItem sortCriteriaItem = menu.findItem(R.id.menu_item_sort_order);
+
+        if (sortCriteriaItem != null) {
+            if (mSortByPopularity) {
+                sortCriteriaItem.setTitle(R.string.sort_by_highest_rated);
+            }
+
+            // The sort criteria used in the Url is highest rated, so we display Popularity
+            else {
+                sortCriteriaItem.setTitle(R.string.sort_by_most_popular);
+            }
+        }
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -203,31 +231,27 @@ public class MovieListActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.menu_item_sort_order) {
-            boolean bSortCriteriaValid = true;
 
-            // Select next sorting criteria
-            mSortBy = (mSortBy + 1) >= MovieDataUrlBuilder.SORT_CRITERIA_COUNT? 0: mSortBy + 1;
-            Log.d(TAG, "onOptionsItemSelected: mSortBy = " + mSortBy);
+            // Toggle sort criteria in menu
+            mSortByPopularity = !mSortByPopularity;
 
-            // Update UI with next sorting criteria
-            if (mSortBy == MovieDataUrlBuilder.SORT_BY_HIGHEST_RATED) {
+            // If the sort criteria used in the Url is popularity, then we display Highest Rated
+            if (mSortByPopularity) {
                 item.setTitle(R.string.sort_by_highest_rated);
             }
 
-            else if (mSortBy == MovieDataUrlBuilder.SORT_BY_MOST_POPULAR) {
+            // The sort criteria used in the Url is highest rated, so we display Popularity
+            else {
                 item.setTitle(R.string.sort_by_most_popular);
             }
-            
-            else {
-                Log.d(TAG, "onOptionsItemSelected: mSortBy value is invalid");
-                bSortCriteriaValid = false;
-            }
 
-            // Download movies based on sort criteria and update UI
-            if (bSortCriteriaValid) {
-                new DownloadMovieDataTask()
-                        .execute(MovieDataUrlBuilder.buildDiscoverUrl(TMDB_API_KEY, mSortBy));
-            }
+            Log.d(TAG, "onOptionsItemSelected: mSortCriteriaInUrl = " + mSortCriteriaInUrl);
+
+           /* new DownloadMovieDataTask()
+                    .execute(MovieDataUrlBuilder.buildDiscoverUrl(TMDB_API_KEY,
+                            getSortCriteria(mSortByPopularity)));*/
+
+            downloadMovieData();
         }
 
         return super.onOptionsItemSelected(item);
@@ -267,6 +291,11 @@ public class MovieListActivity extends AppCompatActivity {
             outState.putParcelableArray(
                     getString(R.string.instance_state_key_movies_data),
                     movieArray);
+
+            // We only save the sort criteria if there are movies loaded in list
+            outState.putBoolean(
+                    getString(R.string.instance_state_key_sort_by_popularity), mSortByPopularity);
+            Log.d(TAG, "onSaveInstanceState: sortCriteria is: " + mSortCriteriaInUrl);
         }
     }
 

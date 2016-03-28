@@ -9,4 +9,6 @@
     <string name="sort_by_most_popular">Sort By Most Popular</string>
     <string name="no_data_available">No data available. Please check your Internet connection.</string>
     <string name="instance_state_key_movies_data">key_movies_data</string>
+    <string name="instance_state_key_sort_criteria">key_sort_criteria</string>
+    <string name="instance_state_key_sort_by_popularity">sort_by_polarity</string>
 </resources>
