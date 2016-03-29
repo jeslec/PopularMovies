@@ -205,9 +205,8 @@ public class MovieListActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu){
-        getMenuInflater().inflate(R.menu.main, menu);
-        
+    public boolean onPrepareOptionsMenu(Menu menu) {
+
         MenuItem sortCriteriaItem = menu.findItem(R.id.menu_item_sort_order);
 
         // Set menu option text based on sort criteria value
@@ -222,6 +221,12 @@ public class MovieListActivity extends AppCompatActivity {
             }
         }
 
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.main, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -233,22 +238,12 @@ public class MovieListActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.menu_item_sort_order) {
-
             // When user changes sort criteria, the last displayed values become invalid
             mMoviesData = null;
 
             // Toggle sort criteria in menu
             mSortByPopularity = !mSortByPopularity;
 
-            // If the sort criteria used in the Url is popularity, then we display Highest Rated
-            if (mSortByPopularity) {
-                item.setTitle(R.string.sort_by_highest_rated);
-            }
-
-            // The sort criteria used in the Url is highest rated, so we display Popularity
-            else {
-                item.setTitle(R.string.sort_by_most_popular);
-            }
             downloadMovieData();
         }
 
