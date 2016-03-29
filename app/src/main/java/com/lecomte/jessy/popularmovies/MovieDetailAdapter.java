@@ -94,11 +94,23 @@ public class MovieDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 final MovieListViewHolderType0 vhViewType0 = (MovieListViewHolderType0)viewHolder;
                 vhViewType0.item = mMovieInfo;
 
-                String posterUrl = MovieDataUrlBuilder.buildPosterUrl(vhViewType0.item.getPoster_path());
+                // No image Url specified: load default image
+                if (vhViewType0.item.getPoster_path() == null ||
+                        vhViewType0.item.getPoster_path().isEmpty() ||
+                        vhViewType0.item.getPoster_path().equals("null")) {
+                    // Load default image (no image)
+                    Picasso.with(vhViewType0.posterImageView.getContext())
+                            .load(R.drawable.noimage).into(vhViewType0.posterImageView);
+                }
 
-                // Get the view's context
-                Picasso.with(vhViewType0.posterTextView.getContext())
-                        .load(posterUrl).into(vhViewType0.posterTextView);
+                // Load image specified by Url
+                else {
+                    // Load image from Url
+                    String posterUrl = MovieDataUrlBuilder.buildPosterUrl(
+                            vhViewType0.item.getPoster_path());
+                    Picasso.with(vhViewType0.posterImageView.getContext())
+                            .load(posterUrl).into(vhViewType0.posterImageView);
+                }
 
                 vhViewType0.releaseDateTextView.setText(vhViewType0.item.getRelease_date());
 

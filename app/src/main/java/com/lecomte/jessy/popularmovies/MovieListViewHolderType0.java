@@ -10,21 +10,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.lecomte.jessy.mythemoviedblib.data.MovieInfo;
-import com.lecomte.jessy.popularmovies.R;
 
 public class MovieListViewHolderType0 extends RecyclerView.ViewHolder {
     public TextView trailersSectionTextView;
     public View mView;
     public TextView releaseDateTextView;
     public TextView voteAverageTextView;
-    public ImageView posterTextView;
+    public ImageView posterImageView;
     public TextView summaryTextView;
     public MovieInfo item;
 
     public MovieListViewHolderType0(View view) {
         super(view);
         mView = view;
-        posterTextView = (ImageView) view.findViewById(R.id.detail_poster_ImageView);
+        posterImageView = (ImageView) view.findViewById(R.id.detail_poster_ImageView);
         releaseDateTextView = (TextView)view.findViewById(R.id.detail_releaseDate_TextView);
         voteAverageTextView = (TextView)view.findViewById(R.id.detail_voteAverage_TextView);
         summaryTextView = (TextView) view.findViewById(R.id.detail_summary_TextView);

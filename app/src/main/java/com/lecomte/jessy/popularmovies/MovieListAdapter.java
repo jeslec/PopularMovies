@@ -54,11 +54,20 @@ public class MovieListAdapter
             return;
         }
 
-        String posterUrl = MovieDataUrlBuilder.buildPosterUrl(holder.mItem.getPoster_path());
+        // No image Url specified for this movie: load default image
+        if (holder.mItem.getPoster_path() == null || holder.mItem.getPoster_path().isEmpty() ||
+                holder.mItem.getPoster_path().equals("null")) {
+            Picasso.with(holder.posterImageView.getContext())
+                    .load(R.drawable.noimage).into(holder.posterImageView);
+        }
 
-        // Neat trick: we are getting the context from the view itself
-        Picasso.with(holder.posterImageView.getContext())
-                .load(posterUrl).into(holder.posterImageView);
+        // Load image from the specified URL
+        else {
+            String posterUrl = MovieDataUrlBuilder.buildPosterUrl(
+                    holder.mItem.getPoster_path());
+            Picasso.with(holder.posterImageView.getContext())
+                    .load(posterUrl).into(holder.posterImageView);
+        }
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
