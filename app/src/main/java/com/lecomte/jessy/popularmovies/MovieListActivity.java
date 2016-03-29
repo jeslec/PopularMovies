@@ -96,8 +96,6 @@ public class MovieListActivity extends AppCompatActivity {
                     getString(R.string.instance_state_key_movies_data));
 
             if (movieInfoParcelArray != null) {
-                Log.d(TAG, "onCreate() - Restoring instance state for movieInfoParcelArray, length: " + movieInfoParcelArray.length);
-
                 MovieInfo[] movieDataArray = new MovieInfo[movieInfoParcelArray.length];
                 for (int i=0; i<movieInfoParcelArray.length; i++) {
                     movieDataArray[i] = (MovieInfo)movieInfoParcelArray[i];
@@ -107,15 +105,11 @@ public class MovieListActivity extends AppCompatActivity {
                 mSortByPopularity = savedInstanceState.getBoolean(
                         getString(R.string.instance_state_key_sort_by_popularity));
 
-                Log.d(TAG, "onCreate() - Restoring instance state for mSortByPopularity, value: " + mSortByPopularity);
-
                 Movies movies = new Movies();
                 movies.setResults(movieDataArray);
                 updateUI(movies);
             }
         }
-
-        Log.d(TAG, "onCreate() - mSortByPopularity: " + mSortByPopularity);
 
         // No movies info was loaded before the config change, so download from server
         if (movieInfoParcelArray == null || movieInfoParcelArray.length == 0) {
@@ -133,7 +127,7 @@ public class MovieListActivity extends AppCompatActivity {
         // If task has not completed before another task is launch, we cancel the old task
         // This can happen when user clicks on sort criteria in menu twice in a row
         cancelDownloadMovieDataTask();
-        
+
         mDownloadMovieDataTask = new DownloadMovieDataTask()
                 .execute(MovieDataUrlBuilder.buildDiscoverUrl(TMDB_API_KEY, getSortCriteria()));
     }
@@ -255,8 +249,6 @@ public class MovieListActivity extends AppCompatActivity {
             else {
                 item.setTitle(R.string.sort_by_most_popular);
             }
-
-            Log.d(TAG, "onOptionsItemSelected: mSortCriteriaInUrl = " + mSortCriteriaInUrl);
             downloadMovieData();
         }
 
@@ -285,7 +277,6 @@ public class MovieListActivity extends AppCompatActivity {
     private void cancelDownloadMovieDataTask() {
         if (mDownloadMovieDataTask != null) {
             boolean bCanceled = mDownloadMovieDataTask.cancel(true);
-            Log.d(TAG, "cancelDownloadMovieDataTask() - Task canceled: " + bCanceled);
             mDownloadMovieDataTask = null;
         }
     }
@@ -300,12 +291,10 @@ public class MovieListActivity extends AppCompatActivity {
             outState.putParcelableArray(
                     getString(R.string.instance_state_key_movies_data),
                     movieArray);
-            Log.d(TAG, "onSaveInstanceState() - Saved movieArray, length: " + movieArray.length);
 
             // We only save the sort criteria if there are movies loaded in list
             outState.putBoolean(
                     getString(R.string.instance_state_key_sort_by_popularity), mSortByPopularity);
-            Log.d(TAG, "onSaveInstanceStateJ() - Saved mSortByPopularity, value: " + mSortByPopularity);
         }
     }
 
